@@ -75,10 +75,10 @@ function sched(i,t,st,d){var bar=i>>4,q=i&15,root=st.prog[bar%st.prog.length],bf
   if(st.hat&&(st.hat===2||q%2===1))noise(t,.03,q%4===3?.03:.018,'highpass',7000,.7,musG);
   if(st.lead&&M.phrase%2===1&&ARP[q]!==null&&(bar%2===0||q<8))tone(t,bf*4*Math.pow(2,ARP[q]/12),d*1.5,'square',.028,1700,musG)}
 function tick(){if(!ac||ac.state!=='running')return;var now=ac.currentTime,st=mstate();
-  var inHosp=S.mode==='hosp'||(S.mode==='over'&&HS.ph),inDream=(S.mode==='dream'||S.mode==='over')&&!inHosp;ambG.gain.setTargetAtTime(S.mode==='title'?0:inDream?.15:inHosp?.07:1,now,.5);
+  var inHosp=S.mode==='hosp'||S.mode==='hall'||(S.mode==='over'&&(HS.ph||HL.ph)),inDream=(S.mode==='dream'||S.mode==='over')&&!inHosp;ambG.gain.setTargetAtTime(S.mode==='title'?0:inDream?.15:inHosp?.07:1,now,.5);
   if(crowdG)crowdG.gain.setTargetAtTime(inDream?(D.ph==='scoop'?.07:.032+.012*Math.sin(now*.9)):0,now,.6);
   droneG.gain.setTargetAtTime(0,now,.3);
-  var duck=S.mode==='cut'&&(C.ph==='knife'||C.ph==='fall')?.3:(inHosp&&!hospMus.paused)?.22:1,gv=GLEVEL*duck;if(gmG)gmG.gain.setTargetAtTime(gv,now,.25);else if(Math.abs(gameMus.volume-gv)>.01)gameMus.volume+=(gv-gameMus.volume)*.08;
+  var duck=S.mode==='cut'&&(C.ph==='knife'||C.ph==='fall')?.3:(inHosp&&!hospMus.paused&&S.mode!=='hall')?.22:1,gv=GLEVEL*duck;if(gmG)gmG.gain.setTargetAtTime(gv,now,.25);else if(Math.abs(gameMus.volume-gv)>.01)gameMus.volume+=(gv-gameMus.volume)*.08;
   if(!st||st.silent||!st.bpm){M.next=now+.08;M.step=0}
   else{var d=60/st.bpm/4;if(M.next<now)M.next=now+.03;while(M.next<now+.14){try{sched(M.step,M.next,st,d)}catch(e){}M.next+=d;M.step=(M.step+1)%64;if(!M.step)M.phrase++}}
   if(S.mode==='title')return;

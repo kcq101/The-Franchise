@@ -6,7 +6,7 @@ A 90s-style 2D browser game. Frank, a quarterback, chases a ring thief down a Ru
 
 Open `index.html` in a browser, or serve the folder with any static web server. It is built for a phone held sideways; on a computer use the arrow keys or A and D.
 
-The title screen has a "Start at" menu for jumping straight to any of the five sequences, and the end box has a Levels button that returns to it.
+The title screen has a "Start at" menu for jumping straight to any of the six sequences, and the end box has a Levels button that returns to it.
 
 ## Controls
 
@@ -18,10 +18,11 @@ The title screen has a "Start at" menu for jumping straight to any of the five s
 | Football run | L cuts up a lane, R cuts down |
 | Loose ball | Alternate to crawl |
 | Hospital bed | Alternate as fast as you can to break the cuffs |
+| Hospital hallway | R jumps, L slides |
 
 ## How it is put together
 
-`index.html` holds the markup and loads one stylesheet and eleven scripts, in this order. The scripts are plain files that share global variables, so the order matters.
+`index.html` holds the markup and loads one stylesheet and twelve scripts, in this order. The scripts are plain files that share global variables, so the order matters.
 
 | File | What it does |
 | --- | --- |
@@ -35,6 +36,7 @@ The title screen has a "Start at" menu for jumping straight to any of the five s
 | `js/scene-alley.js` | Arriving at the van, the confrontation timeline, reaching the police |
 | `js/scene-dream.js` | The football level: run, collision, loose ball, touchdown, and its drawing |
 | `js/scene-hospital.js` | The hospital scene: waking up, the handcuffs, breaking free, and its drawing |
+| `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 

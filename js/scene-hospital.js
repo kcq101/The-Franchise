@@ -1,7 +1,7 @@
 /* The hospital scene: Frank wakes up in close-up, finds he is cuffed to the bed, and breaks free. Uses the art when it has loaded, with a code-drawn fallback. */
 var HOSP_TAP=.034,HOSP_DECAY=.1;
 function hphase(n){HS.ph=n;HS.t0=S.clock}
-function startHosp(){S.mode='hosp';S.v=0;S.last=null;HS.p=0;HS.pullL=0;HS.pullR=0;HS.brokeL=false;HS.brokeR=false;HS.k=0;HS.white=1;HS.beat=0;HS.shake=0;HS.time=0;HS.say='';HS.clank=0;
+function startHosp(){HS.out=false;S.mode='hosp';S.v=0;S.last=null;HS.p=0;HS.pullL=0;HS.pullR=0;HS.brokeL=false;HS.brokeR=false;HS.k=0;HS.white=1;HS.beat=0;HS.shake=0;HS.time=0;HS.say='';HS.clank=0;
   startHospMusic();hint.hidden=true;padsOn(false);lvl.innerHTML='RUSHVILLE GENERAL<br>LEVEL 1-3';barlab.textContent='CUFFS';track.style.width='0%';hphase('wake')}
 function beep(){if(!audio())return;try{tone(ac.currentTime,990,.09,'sine',.05)}catch(e){}}
 function clank(v){if(!audio())return;try{var t=ac.currentTime,r=.9+Math.random()*.25;noise(t,.05,v,'highpass',3200,.7);tone(t,1750*r,.09,'triangle',v*.7);tone(t+.02,2600*r,.06,'triangle',v*.4)}catch(e){}}
@@ -14,7 +14,7 @@ function hospTap(side){if(HS.ph!=='break')return;hint.hidden=true;var pe=side===
   if(!HS.brokeR&&HS.p>=1){HS.brokeR=true;snap();HS.shake=1;HS.flash=1;HS.say='SNAP!';HS.sayT=S.clock;hphase('free');padsOn(false);
     var bonus=Math.max(0,Math.round((30-HS.time)*100));S.score+=bonus;scoreEl.textContent=pad6(S.score);S.stat+='<br>BROKE FREE IN '+HS.time.toFixed(1)+'s'}}
 function hospUpdate(dt){var tt=S.clock-HS.t0;
-  HS.white=Math.max(0,HS.white-dt*.45);HS.shake=Math.max(0,HS.shake-dt*4);HS.flash=Math.max(0,(HS.flash||0)-dt*4);HS.pullL=Math.max(0,HS.pullL-dt*6);HS.pullR=Math.max(0,HS.pullR-dt*6);
+  if(!HS.out)HS.white=Math.max(0,HS.white-dt*.45);HS.shake=Math.max(0,HS.shake-dt*4);HS.flash=Math.max(0,(HS.flash||0)-dt*4);HS.pullL=Math.max(0,HS.pullL-dt*6);HS.pullR=Math.max(0,HS.pullR-dt*6);
   var hr=HS.ph==='wake'?58:HS.ph==='free'?150:72+HS.p*70+(HS.ph==='cuff'?25:0);HS.hr=hr;HS.beat+=dt*hr/60;if(HS.beat>=1){HS.beat-=1;beep()}
   if(HS.ph==='wake'){if(tt>6.2)hphase('look')}
   else if(HS.ph==='look'){if(tt>2.8)hphase('cuff')}
@@ -23,8 +23,7 @@ function hospUpdate(dt){var tt=S.clock-HS.t0;
     if(tt>1.9&&HS.clank<2){HS.clank=2;HS.pullL=1;HS.pullR=1;clank(.25);HS.shake=.7;HS.say='!';HS.sayT=S.clock}
     if(tt>3.6){hphase('break');padsOn(true);S.last=null;hint.textContent='MASH L, R AS FAST AS YOU CAN!\nBREAK THE CUFFS';hint.hidden=false}}
   else if(HS.ph==='break'){HS.time+=dt;var floor=HS.brokeL?.5:0;HS.p=Math.max(floor,HS.p-HOSP_DECAY*dt);track.style.width=(HS.p*100).toFixed(1)+'%'}
-  else if(HS.ph==='free'){track.style.width='100%';if(tt>2.6){hphase('end');S.mode='over';
-    endText.textContent='Frank snaps both cuffs off the bed rails. Now he has to get out of the hospital.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
+  else if(HS.ph==='free'){track.style.width='100%';if(tt>2.6){HS.out=true;HS.white=Math.min(1,HS.white+dt*1.1);if(HS.white>=1){HS.ph='';startHall()}}}
   /* waking up: the picture starts blown-out and blurred and clears as he comes round */
   var blur=0,bright=1;if(HS.ph==='wake'){var u=Math.max(0,Math.min(1,(tt-2.4)/3.4));blur=12*(1-u*u*(3-2*u));bright=1+1.3*(1-Math.min(1,tt/5))}
   var f=blur>.3||bright>1.02?'blur('+blur.toFixed(1)+'px) brightness('+bright.toFixed(2)+')':'';if(cv.style.filter!==f)cv.style.filter=f;

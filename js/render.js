@@ -1,5 +1,6 @@
 /* Draws one frame of the alley scenes. */
 function draw(){
+  if(S.mode==='hall'||(S.mode==='over'&&HL.ph)){drawHall();return}
   if(S.mode==='hosp'||(S.mode==='over'&&HS.ph)){drawHosp();return}
   if(S.mode==='dream'||S.mode==='over'){drawDream();return}
   var cam=Math.round(S.cam),t=S.clock,i,sx,b,p,z=1,tx=0,ty=0;
