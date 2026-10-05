@@ -58,5 +58,6 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `sec1.webp` to `sec5.webp`, `sky.webp`, `street.webp` | Alley walls, skyline, street |
 | `stands.png` | Stadium backdrop |
 | `hosp_faces.webp`, `hosp_wide.webp` | Hospital: five close-up face panels, and three wide shots of the bed (cuffed, left free, both free) |
+| `hosp_wide_v1.webp` | The earlier set of wide shots, kept for reference and not used by the game |
 | `title2.webp`, `portrait.png` | Title art and HUD portrait |
 | `title.mp3`, `game.mp3`, `hospital.mp3` | Title music, gameplay music and the hospital voice track |
