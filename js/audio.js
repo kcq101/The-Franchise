@@ -53,8 +53,9 @@ titleMus.loop=true;gameMus.loop=true;titleMus.preload='auto';gameMus.preload='au
 var GLEVEL=(Math.abs(gameMus.volume-GVOL)<.02?GVOL:1)*.5,gmG=null;
 function playTitle(){if(!TITLE_TRACK){titleOn=true;return}if(muted)return;var p=titleMus.play();if(p&&p.then)p.then(function(){titleOn=true;titleHint.textContent='TAP TO START'},function(){titleOn=false;titleHint.textContent='TAP FOR SOUND'});else titleOn=true}
 /* phones only let a track start later on its own if it was first started from a tap, so prime the hospital track here */
-function primeHospMusic(){try{hospMus.muted=true;var p=hospMus.play();if(p&&p.then)p.then(function(){hospMus.pause();hospMus.currentTime=0;hospMus.muted=false},function(){hospMus.muted=false})}catch(e){}}
-function startHospMusic(){try{hospMus.muted=false;hospMus.currentTime=0;if(!muted){var p=hospMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
+var hospWanted=false;
+function primeHospMusic(){if(hospWanted)return;try{hospMus.muted=true;var p=hospMus.play();if(p&&p.then)p.then(function(){hospMus.muted=false;if(hospWanted)return;/* the hospital scene already started: leave it playing */hospMus.pause();hospMus.currentTime=0},function(){hospMus.muted=false})}catch(e){}}
+function startHospMusic(){hospWanted=true;try{hospMus.muted=false;hospMus.currentTime=0;if(!muted){var p=hospMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function startGameMusic(){try{titleMus.pause();gameMus.currentTime=0;if(!muted){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function mstate(){return null;var m=S.mode,p=C.ph;
   if(m==='ready')return{bpm:112,bass:1,hat:1,prog:[0,0,-4,-2]};
