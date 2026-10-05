@@ -1,4 +1,5 @@
 /* The escape: Frank sprints down the hospital hallway, jumping and sliding past obstacles, then crashes out through the window at the end. Uses the hallway art when it has loaded, with a code-drawn fallback. */
+var HALL_TI=.55;   /* seconds into the landing shot when he hits the ground */
 var HALL_LEN=2900,HALL_GY=180,HALL_CEIL=34,HALL_FLOOR=150;
 var HL={ph:'',t0:0,x:0,sp:0,jy:0,vy:0,slide:0,stun:0,p:1,obs:[],dodged:0,hits:0,white:0,shake:0,flash:0,say:'',sayT:0,step:0,style:false,shards:[]};
 var HALL_KINDS={gurney:{w:52,h:28},chair:{w:30,h:28},cart:{w:30,h:30},sign:{w:16,h:20},lamp:{w:40,high:1},bar:{w:64,high:1}};
@@ -6,7 +7,7 @@ var HALL_KINDS={gurney:{w:52,h:28},chair:{w:30,h:28},cart:{w:30,h:30},sign:{w:16
 var hallBg=load('hall_bg.webp'),hallObsImg=load('hall_obs.png'),hallWin=load('hall_window.webp'),hallOut=load('hall_outside.webp');
 var HALL_OBS={gurney:[0,43,121,59],chair:[123,36,73,66],cart:[198,30,65,72],sign:[265,54,36,48],lamp:[303,24,97,78],bar:[402,0,163,102]};
 function hlphase(n){HL.ph=n;HL.t0=S.clock}
-function startHall(){S.mode='hall';S.v=0;S.last=null;HL.x=0;HL.sp=0;HL.jy=0;HL.vy=0;HL.slide=0;HL.stun=0;HL.p=1;HL.dodged=0;HL.hits=0;HL.white=1;HL.shake=0;HL.flash=0;HL.say='';HL.step=0;HL.style=false;HL.shards=[];
+function startHall(){S.mode='hall';S.v=0;S.last=null;HL.x=0;HL.sp=0;HL.jy=0;HL.vy=0;HL.slide=0;HL.stun=0;HL.p=1;HL.dodged=0;HL.hits=0;HL.white=1;HL.shake=0;HL.flash=0;HL.say='';HL.step=0;HL.style=false;HL.shards=[];HL.landed=false;
   var r=rng(4242),x=420,low=['gurney','chair','cart','sign','gurney'],high=['lamp','bar'],n=0;HL.obs=[];
   while(x<HALL_LEN-330){var k=(n%3===2||r()<.22)?high[(r()*2)|0]:low[(r()*low.length)|0],d=HALL_KINDS[k];HL.obs.push({k:k,x:x,w:d.w,h:d.h||0,high:!!d.high,done:false,hit:0});n++;x+=Math.max(150,215-n*6)+r()*55}
   cv.style.filter='';hint.textContent='R = JUMP     L = SLIDE\nGET TO THE WINDOW';hint.hidden=false;padsOn(true);
@@ -40,8 +41,14 @@ function hallUpdate(dt){var tt=S.clock-HL.t0,t=S.clock,i,o;
     for(i=0;i<HL.shards.length;i++){var s=HL.shards[i];s.vy+=330*dt*slow;s.x+=s.vx*dt*slow;s.y+=s.vy*dt*slow;s.r+=s.vr*dt*slow}
     if(HL.ph==='smash'&&tt>.45){hlphase('out');HL.flash=.8;HL.say='CRASH!';HL.sayT=t;
       for(i=0;i<HL.shards.length;i++){s=HL.shards[i];s.x=0;s.y=0;s.vx=30+Math.random()*190;s.vy=-110+Math.random()*150}}
-    else if(HL.ph==='out'&&tt>3){hlphase('end');S.mode='over';S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
-      endText.textContent='Frank crashes through the window and out into the Rushville night.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
+    else if(HL.ph==='out'&&tt>2.3){hlphase('fall');
+      if(audio())try{var w=noise(ac.currentTime,2.7,.16,'bandpass',500,.8);w.frequency.linearRampToValueAtTime(1700,ac.currentTime+2.6)}catch(e){}}}
+  else if(HL.ph==='fall'){if(tt>2.6){hlphase('land');HL.landed=false}}
+  else if(HL.ph==='land'){
+    if(!HL.landed&&tt>=HALL_TI){HL.landed=true;HL.shake=1.4;HL.flash=.8;thump(.4,true);HL.say='THOOM!';HL.sayT=t;
+      if(audio())try{var n0=ac.currentTime;tone(n0,70,.7,'sine',.4,0,sfxG,30);noise(n0,.5,.25,'lowpass',300,.7);for(i=0;i<10;i++)tone(n0+.25+Math.random()*.9,2000+Math.random()*3000,.07,'triangle',.02+Math.random()*.02)}catch(e){}}
+    if(tt>HALL_TI+3.2){hlphase('end');S.mode='over';S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
+      endText.textContent='Frank drops four floors and lands in a crouch on the street outside Rushville General. He is out.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
   var on=Math.ceil(HL.p*6-.001);for(i=0;i<6;i++)segs[i].className=i<on?'on':''}
 
 /* ---------- drawing ---------- */
@@ -82,7 +89,9 @@ function hallFrank(fx,t){var f,base=HALL_GY+1-HL.jy,i;
 
 function drawHall(){var t=S.clock,tt=t-HL.t0,ph=HL.ph,i,sh=HL.shake,G=HALL_GY,fx=Math.round(W*.28),cam=HL.x-fx;
   g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);
-  if(ph==='out'||ph==='end'){drawHallOutside(t,ph==='end'?3:tt);return}
+  if(ph==='out'){drawHallOutside(t,tt);return}
+  if(ph==='fall'){drawHallFall(t,tt);return}
+  if(ph==='land'||ph==='end'){drawHallLand(t,ph==='end'?99:tt);return}
   var wx=function(x){return Math.round(x-cam)};
   var ex=wx(HALL_LEN),art=ok(hallBg)&&ok(hallWin);
   if(art){var TW=648,k0=Math.floor(cam/TW),bx;for(var kk=k0;kk*TW-cam<W+8;kk++){bx=Math.round(kk*TW-cam);
@@ -147,3 +156,35 @@ function drawHallOutside(t,tt){var i,u=Math.min(1,tt/3),bw=Math.round(W*.4),wy=5
   if(HL.say==='CRASH!'&&t-HL.sayT<1.6)burst('CRASH!',wx0+70,wy-14,16,'#ffd27a',HL.sayT);
   g.setTransform(2,0,0,2,0,0);R(0,0,W,16,'#000');R(0,H-16,W,16,'#000');
   if(HL.flash>0)R(0,0,W,H,'rgba(255,255,255,'+(HL.flash*.8).toFixed(2)+')')}
+
+/* ---------- the cinematic after the window: the fall, then the landing ---------- */
+function gownAt(f,x,y,rot,sc,sy){if(!ok(gownImg))return;g.save();g.translate(x,y);g.rotate(rot||0);g.scale(sc||1,(sc||1)*(sy||1));g.drawImage(gownImg,f*GW,0,GW,GH,-GW/4,-GH/4,GW/2,GH/2);g.restore()}
+function letterbox(){g.setTransform(2,0,0,2,0,0);R(0,0,W,16,'#000');R(0,H-16,W,16,'#000');if(HL.flash>0)R(0,0,W,H,'rgba(255,255,255,'+Math.min(1,HL.flash*.8).toFixed(2)+')')}
+function drawHallFall(t,tt){var i,bw=Math.round(W*.44),u=tt/2.6;
+  R(-8,-8,W+16,H+16,'#0a1030');
+  if(ok(skyImg))g.drawImage(skyImg,0,0,1240,320,-8,30-tt*22,W+16,H+70);
+  /* the hospital wall rushing past, drawn twice for a motion blur */
+  if(ok(hallOut)){var th=bw*720/330,off=(tt*560)%th;for(var pass=0;pass<2;pass++){g.globalAlpha=pass?.45:1;for(var y=-off-th+pass*9;y<H+8;y+=th)g.drawImage(hallOut,0,0,330,720,-6,y,bw,th+1)}g.globalAlpha=1}
+  else R(-8,-8,bw,H+16,'#39415a');
+  var sg=g.createLinearGradient(bw-30,0,bw+6,0);sg.addColorStop(0,'rgba(8,12,34,0)');sg.addColorStop(1,'rgba(8,12,34,.55)');g.fillStyle=sg;g.fillRect(bw-30,-8,36,H+16);
+  for(i=0;i<16;i++){var lx=(i*61+17)%W,ly=H-((t*(420+i*37)+i*53)%(H+60));R(lx,ly,1,22+(i%4)*9,'rgba(255,255,255,'+(.12+(i%3)*.08)+')')}
+  var fx=W*.63+Math.sin(t*2.1)*5,fy=104+Math.sin(t*3.3)*4-(1-Math.min(1,tt/.5))*70;
+  for(i=0;i<22;i++){var a=i*2.4,rx=fx+Math.cos(a)*(30+(i*13)%70),ry=((i*47-t*(60+(i%5)*22))%(H+20)+H+20)%(H+20)-10,s=2+(i%4);
+    g.save();g.translate(rx,ry);g.rotate(t*(2+i%3)+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.globalAlpha=.85;g.beginPath();g.moveTo(0,-s);g.lineTo(s*.7,s*.6);g.lineTo(-s*.6,s*.4);g.closePath();g.fill();g.restore()}
+  gownAt(11,fx,fy,1.02+Math.sin(t*2.6)*.06,1.35+.25*u);
+  letterbox()}
+function drawHallLand(t,tt){var i,G=178,fx=Math.round(W*.56),hit=tt>=HALL_TI,k=Math.max(0,tt-HALL_TI),bw=Math.round(W*.5);
+  R(-8,-8,W+16,H+16,'#0a1030');
+  if(ok(skyImg))g.drawImage(skyImg,0,0,1240,320,-8,-8,W+16,G+10);
+  if(ok(hallOut)){var wh=bw*250/330;g.drawImage(hallOut,0,470,330,250,-6,G-8-wh,bw,wh)}else R(-8,-8,bw,G,'#39415a');
+  R(-8,G-8,W+16,10,'#3c3d4e');R(-8,G-8,W+16,1,'#5a5c72');R(-8,G+2,W+16,3,'#22232f');
+  if(ok(streetImg)){for(var sx=-40;sx<W+8;sx+=475)g.drawImage(streetImg,sx,G+4,475,56)}else R(-8,G+4,W+16,H,'#14162a');
+  if(hit){g.strokeStyle='rgba(8,8,16,.8)';g.lineWidth=1.2;g.beginPath();for(i=0;i<9;i++){var a=Math.PI*(.05+i*.112),len=(22+(i*17)%26)*Math.min(1,k*6);g.moveTo(fx,G+12);g.lineTo(fx+Math.cos(a)*len*1.6,G+12+Math.sin(a)*len*.28+(i%2?3:-2));}g.stroke();
+    for(i=0;i<10;i++){var d=(i%2?1:-1)*(14+k*70+(i>>1)*9),r=5+k*16+(i%3)*2,al=Math.max(0,.55-k*.6);g.fillStyle='rgba(205,210,225,'+al.toFixed(2)+')';g.beginPath();g.arc(fx+d,G+10-k*8-(i%3)*3,r,0,TAU);g.fill()}}
+  R(fx-22,G+12,44,3,'rgba(0,0,0,.5)');
+  if(!hit){var u=tt/HALL_TI;gownAt(11,fx-40+40*u,-50+(G-40+50)*u*u,1.15,1.25)}
+  else{var sq=Math.min(1,k/.22),rise=k>1.9?Math.min(1,(k-1.9)/.5):0;gownAt(8,fx,G-32+(1-sq)*5-rise*2,0,1.3,.84+.16*sq)}
+  /* glass coming down after him */
+  if(hit&&k<1.6)for(i=0;i<18;i++){var gy=-20+((k*190+i*29)%(G+30)),gx=fx-90+(i*23)%180;if(gy<G+8){g.save();g.translate(gx,gy);g.rotate(k*6+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.fillRect(-2,-1,4,2);g.restore()}}
+  if(HL.say==='THOOM!'&&t-HL.sayT<1.2)burst('THOOM!',fx,G-70,16,'#ffd27a',HL.sayT);
+  letterbox()}
