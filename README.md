@@ -18,18 +18,25 @@ Open `index.html` in a browser, or serve the folder with any static web server. 
 
 ## How it is put together
 
-Everything is in `index.html`: styles at the top, then the markup, then one script. The script is organised in this order:
+`index.html` holds the markup and loads one stylesheet and ten scripts, in this order. The scripts are plain files that share global variables, so the order matters.
 
-1. Setup and helpers (`fit`, `R`, `rng`)
-2. Scenery layout for the alley (`layout`, the `SEC` wall sections)
-3. State, input and audio (`S`, `C`, `D`, `step`, `audio`, `tick`, sound effects)
-4. Scene logic: `arrive` and `cutUpdate` (confrontation), `arrive2` (police), `startDream`, `dreamTap` and `dreamUpdate` (football)
-5. Drawing: `figure` (code-drawn fallback characters), `drawMark`, `drawDream`, `draw`
-6. The main loop (`frame`)
+| File | What it does |
+| --- | --- |
+| `css/style.css` | Layout, HUD, title screen and the L and R buttons |
+| `js/core.js` | Canvas setup, constants and small shared helpers |
+| `js/state.js` | Game state: `S` (overall), `C` (alley confrontation), `D` (dream level) |
+| `js/audio.js` | Sound effects, city and crowd ambience, sirens, music tracks |
+| `js/scenery.js` | Alley wall layout, fences, lamp poles, neon sign, code-drawn props |
+| `js/characters.js` | Sprite sheets and character drawing for the alley scenes |
+| `js/input.js` | Title screen, buttons, keyboard, and what a tap does in each alley scene |
+| `js/scene-alley.js` | Arriving at the van, the confrontation timeline, reaching the police |
+| `js/scene-dream.js` | The football level: run, collision, loose ball, touchdown, and its drawing |
+| `js/render.js` | Draws one frame of the alley scenes |
+| `js/main.js` | The game loop and start-up |
 
 ## Assets
 
-Sprite sheets are single rows of equal-size cells. Cell sizes are hard-coded next to where each sheet is drawn.
+Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single rows of equal-size cells; cell sizes are hard-coded next to where each sheet is drawn.
 
 | File | What it is |
 | --- | --- |
