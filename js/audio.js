@@ -46,7 +46,7 @@ function siren(){if(!audio())return;try{var t=ac.currentTime;
   [0,.42].forEach(function(d){tone(t+d,196,.3,'sawtooth',.09,900);tone(t+d,247,.3,'sawtooth',.07,900)})}catch(e){}}
 /* ---- ambience events and music, scheduled a little ahead of the clock ---- */
 /* TITLE_TRACK is the opening music file in assets/audio; leave it empty to have a silent title screen. */
-var TITLE_TRACK='',titleMus=TITLE_TRACK?new Audio('assets/audio/'+TITLE_TRACK):new Audio(),gameMus=new Audio('assets/audio/game.mp3'),hospMus=new Audio('assets/audio/hospital.mp3'),TVOL=.6,GVOL=.32,HVOL=.9,titleOn=false;
+var TITLE_TRACK='title.mp3',titleMus=TITLE_TRACK?new Audio('assets/audio/'+TITLE_TRACK):new Audio(),gameMus=new Audio('assets/audio/game.mp3'),hospMus=new Audio('assets/audio/hospital.mp3'),TVOL=.6,GVOL=.32,HVOL=.9,titleOn=false;
 hospMus.preload='auto';hospMus.volume=HVOL;
 titleMus.loop=true;gameMus.loop=true;titleMus.preload='auto';gameMus.preload='auto';titleMus.volume=TVOL;gameMus.volume=GVOL;
 /* some phones ignore element volume, so the level they played at was 1; halve whichever level was actually heard */
