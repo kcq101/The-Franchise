@@ -35,7 +35,7 @@ var hfImg=load('hosp_faces.webp'),hwImg=load('hosp_wide.webp'),HFW=248,HFH=352,H
 function drawHospArt(){var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,sh=HS.shake,i;
   g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);R(-8,-8,W+16,H+16,'#1b2742');
   /* a face panel filling the screen height; the pillow at the edges of the first panel is stretched to fill the sides */
-  function closeup(f,zoom,dx){var s=H*1.32*(zoom||1)/HFH,dw=HFW*s,dh=HFH*s,x=Math.round(cx-dw/2+(dx||0)),y=Math.round(H/2-dh*.47);
+  function closeup(f,zoom,dx,ay){var s=H*1.32*(zoom||1)/HFH,dw=HFW*s,dh=HFH*s,x=Math.round(cx-dw/2+(dx||0)),y=Math.round(H/2-dh*(ay||.47));
     g.drawImage(hfImg,3,0,4,HFH,-8,y,x+9,dh);g.drawImage(hfImg,HFW-7,0,4,HFH,x+dw-1,y,W-x-dw+9,dh);g.drawImage(hfImg,f*HFW,0,HFW,HFH,x,y,dw,dh)}
   var ws=Math.max(W/HWW,H/HWH);
   function wide(zoom){var s=ws*(zoom||1),dw=HWW*s,dh=HWH*s;g.drawImage(hwImg,Math.round(cx-dw/2),Math.round(H/2-dh/2),dw,dh)}
@@ -48,7 +48,7 @@ function drawHospArt(){var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,sh=HS.shake,i;
   else if(ph==='cuff'){
     if(tt<1){var u=tt*tt*(3-2*tt);wide(1+.45*(1-u));g.globalAlpha=1-u;closeup(2,1+.2*u);g.globalAlpha=1;showWide=u>.5}
     else if(tt<2.3){wide(1);showWide=true}
-    else closeup(3,1+.04*Math.min(1,(tt-2.3)*4))}
+    else closeup(3,1.72+.05*Math.min(1,(tt-2.3)*4),0,.455)}   /* tight on the eyes: his hands are still cuffed, so keep the raised hands in this panel off screen */
   else if(ph==='break'){wide(1);showWide=true}
   else closeup(5,1+.03*Math.sin(t*6));
   if(showWide){[[-1,452,386],[1,1082,386]].forEach(function(c){var pull=c[0]<0?HS.pullL:HS.pullR,pt=wpt(c[1],c[2]);
