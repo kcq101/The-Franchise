@@ -1,6 +1,6 @@
 /* The dream football level: run, collision, loose ball, touchdown, and all of its drawing. */
 var RUNLEN=1500;
-function startDream(){S.mode='dream';S.v=0;D.p=1;D.fx=-90;D.lx=9999;D.wall=false;D.dist=0;D.sp=0;D.ln=1;D.lyf=1;D.bonkLn=1;D.obs=[];D.next=140;D.stun=0;D.jukes=0;D.hits=0;D.tips=0;D.dgo=false;D.dx=999;D.td=false;D.lane=0;D.say='';
+function startDream(){D.fading=false;S.mode='dream';S.v=0;D.p=1;D.fx=-90;D.lx=9999;D.wall=false;D.dist=0;D.sp=0;D.ln=1;D.lyf=1;D.bonkLn=1;D.obs=[];D.next=140;D.stun=0;D.jukes=0;D.hits=0;D.tips=0;D.dgo=false;D.dx=999;D.td=false;D.lane=0;D.say='';
   hint.hidden=true;lvl.innerHTML='THE DREAM<br>LEVEL 1-2';barlab.textContent='BALANCE';track.style.width='0%';dphase('intro')}
 function dreamTap(side){var pe=side==='L'?padL:padR;
   if(D.ph==='run'){hint.hidden=true;var n=Math.max(0,Math.min(2,D.ln+(side==='L'?-1:1)));if(n!==D.ln){D.ln=n;foot(side)}return}
@@ -8,7 +8,7 @@ function dreamTap(side){var pe=side==='L'?padL:padR;
   if(S.last===side){pe.classList.add('miss');setTimeout(function(){pe.classList.remove('miss')},120);blip(70,.08,.045);return}
   S.last=side;padL.classList.toggle('next',side==='R');padR.classList.toggle('next',side==='L');S.v=1;D.fx+=6;scuff(side)}
 function padsOn(on){padL.disabled=padR.disabled=!on;padL.classList.toggle('next',on);padR.classList.toggle('next',on)}
-function dreamUpdate(dt){var tt=S.clock-D.t0,t=S.clock,i,o;D.white=Math.max(0,D.white-dt*.55);S.v*=Math.exp(-3*dt);
+function dreamUpdate(dt){var tt=S.clock-D.t0,t=S.clock,i,o;if(!D.fading)D.white=Math.max(0,D.white-dt*.55);S.v*=Math.exp(-3*dt);
   if(D.ph==='intro'){if(tt>3){dphase('set');blip(2300,.1,.05);setTimeout(function(){blip(2500,.3,.05)},130)}}
   else if(D.ph==='set'){if(tt>.7){dphase('run');padsOn(true);hint.textContent='L = CUT UP    R = CUT DOWN\nDODGE THE ADMIRALS';hint.hidden=false}}
   else if(D.ph==='run'){
@@ -37,8 +37,8 @@ function dreamUpdate(dt){var tt=S.clock-D.t0,t=S.clock,i,o;D.white=Math.max(0,D.
       if(audio()){noise(ac.currentTime,1.6,.07,'bandpass',480,.8);tone(ac.currentTime,230,1.5,'sawtooth',.035,500,sfxG,110)}}}}
   else if(D.ph==='scoop'){if(tt>.32)D.dx-=210*dt;
     if(!D.td&&tt>1.7){D.td=true;D.say='TOUCHDOWN ADMIRALS';D.sayT=t;blip(2300,.1,.05);setTimeout(function(){blip(2500,.4,.05)},130)}
-    if(tt>4){dphase('end');S.mode='over';endText.textContent="Frank weaves through the Admirals, then runs face-first into his own lineman. The ball pops loose and they run it in.";
-      stat.innerHTML=S.stat+'<br>JUKES '+D.jukes+'  HITS '+D.hits+'<br>TO BE CONTINUED';endBox.hidden=false}}
+    if(tt>3.4&&!D.fading){D.fading=true;S.stat+='<br>JUKES '+D.jukes+'  HITS '+D.hits}
+    if(D.fading){D.white=Math.min(1,D.white+dt*.7);if(D.white>=1)startHosp()}}
   if(D.shake>0)D.shake=Math.max(0,D.shake-dt*4);C.flash=Math.max(0,C.flash-dt*4);
   var on=D.ph==='loose'||D.ph==='scoop'?Math.max(0,6-Math.round(Math.max(0,D.bx-D.fx-38)/9)):Math.ceil(D.p*6);for(i=0;i<6;i++)segs[i].className=i<on?'on':''}
 function ballPhys(dt){D.bvy+=430*dt;D.bx+=D.bvx*dt;D.by+=D.bvy*dt;D.brot+=D.bvx*dt*.12;

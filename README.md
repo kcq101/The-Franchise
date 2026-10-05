@@ -1,6 +1,6 @@
 # The Franchise
 
-A 90s-style 2D browser game. Frank, a quarterback, chases a ring thief down a Rushville alley, loses a grapple, stumbles on to the police, and then dreams his way into a football game that ends in a legendary fumble. All characters, teams and places are fictional.
+A 90s-style 2D browser game. Frank, a quarterback, chases a ring thief down a Rushville alley, loses a grapple, stumbles on to the police, dreams his way into a football game that ends in a legendary fumble, and wakes up handcuffed to a hospital bed. All characters, teams and places are fictional.
 
 ## Play
 
@@ -15,22 +15,24 @@ Open `index.html` in a browser, or serve the folder with any static web server. 
 | Stumble | Alternate to limp forward |
 | Football run | L cuts up a lane, R cuts down |
 | Loose ball | Alternate to crawl |
+| Hospital bed | Alternate as fast as you can to break the cuffs |
 
 ## How it is put together
 
-`index.html` holds the markup and loads one stylesheet and ten scripts, in this order. The scripts are plain files that share global variables, so the order matters.
+`index.html` holds the markup and loads one stylesheet and eleven scripts, in this order. The scripts are plain files that share global variables, so the order matters.
 
 | File | What it does |
 | --- | --- |
 | `css/style.css` | Layout, HUD, title screen and the L and R buttons |
 | `js/core.js` | Canvas setup, constants and small shared helpers |
-| `js/state.js` | Game state: `S` (overall), `C` (alley confrontation), `D` (dream level) |
+| `js/state.js` | Game state: `S` (overall), `C` (alley confrontation), `D` (dream level), `HS` (hospital) |
 | `js/audio.js` | Sound effects, city and crowd ambience, sirens, music tracks |
 | `js/scenery.js` | Alley wall layout, fences, lamp poles, neon sign, code-drawn props |
 | `js/characters.js` | Sprite sheets and character drawing for the alley scenes |
 | `js/input.js` | Title screen, buttons, keyboard, and what a tap does in each alley scene |
 | `js/scene-alley.js` | Arriving at the van, the confrontation timeline, reaching the police |
 | `js/scene-dream.js` | The football level: run, collision, loose ball, touchdown, and its drawing |
+| `js/scene-hospital.js` | The hospital scene: waking up, the handcuffs, breaking free, and its drawing |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 

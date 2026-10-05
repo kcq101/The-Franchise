@@ -1,5 +1,5 @@
 /* Title screen, L and R buttons, keyboard, sound toggle, and what a tap does in each alley scene. */
-function reset(){S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
+function reset(){HS.ph='';cv.style.filter='';S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
   padL.disabled=padR.disabled=false;padL.classList.add('next');padR.classList.add('next');scoreEl.textContent='000000';track.style.width='0%'}
 function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();titleEl.hidden=true;reset();[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
   try{var el=document.documentElement;if(window.matchMedia('(pointer:coarse)').matches&&el.requestFullscreen)el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){})}catch(e){}}
@@ -7,6 +7,7 @@ var titleHint=document.getElementById('titlehint');titleEl.addEventListener('cli
 function step(side){
   if(S.mode==='title'){begin();return}
   if(S.mode==='dream'){dreamTap(side);return}
+  if(S.mode==='hosp'){hospTap(side);return}
   if(S.mode==='done'||S.mode==='over')return;
   if(S.mode==='cut'){if(C.ph!=='grapple')return;var pe=side==='L'?padL:padR;
     if(S.last===side){pe.classList.add('miss');setTimeout(function(){pe.classList.remove('miss')},120);blip(70,.08,.045);return}
