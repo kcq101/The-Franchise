@@ -1,4 +1,4 @@
-/* The hospital scene: Frank wakes up in close-up, finds he is cuffed to the bed, and breaks free. Drawn in code. */
+/* The hospital scene: Frank wakes up in close-up, finds he is cuffed to the bed, and breaks free. Uses the art when it has loaded, with a code-drawn fallback. */
 var HOSP_TAP=.034,HOSP_DECAY=.1;
 function hphase(n){HS.ph=n;HS.t0=S.clock}
 function startHosp(){S.mode='hosp';S.v=0;S.last=null;HS.p=0;HS.pullL=0;HS.pullR=0;HS.brokeL=false;HS.brokeR=false;HS.k=0;HS.white=1;HS.beat=0;HS.shake=0;HS.time=0;HS.say='';HS.clank=0;
@@ -30,7 +30,42 @@ function hospUpdate(dt){var tt=S.clock-HS.t0;
   var f=blur>.3||bright>1.02?'blur('+blur.toFixed(1)+'px) brightness('+bright.toFixed(2)+')':'';if(cv.style.filter!==f)cv.style.filter=f;
   var on=Math.ceil(HS.p*6-.001);for(var i=0;i<6;i++)segs[i].className=i<on?'on':''}
 
-function drawHosp(){var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,i,k=HS.k*HS.k*(3-2*HS.k),z=1.75-.75*k,fy=92,ty=(108+(fy-108)*k)-fy*z,sh=HS.shake;
+var hfImg=load('hosp_faces.webp'),hwImg=load('hosp_wide.webp'),HFW=248,HFH=352,HWW=1536,HWH=660;
+/* The art version: six close-up face panels and one wide shot of the bed. */
+function drawHospArt(){var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,sh=HS.shake,i;
+  g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);R(-8,-8,W+16,H+16,'#1b2742');
+  /* a face panel filling the screen height; the pillow at the edges of the first panel is stretched to fill the sides */
+  function closeup(f,zoom,dx){var s=H*1.32*(zoom||1)/HFH,dw=HFW*s,dh=HFH*s,x=Math.round(cx-dw/2+(dx||0)),y=Math.round(H/2-dh*.47);
+    g.drawImage(hfImg,3,0,4,HFH,-8,y,x+9,dh);g.drawImage(hfImg,HFW-7,0,4,HFH,x+dw-1,y,W-x-dw+9,dh);g.drawImage(hfImg,f*HFW,0,HFW,HFH,x,y,dw,dh)}
+  var ws=Math.max(W/HWW,H/HWH);
+  function wide(zoom){var s=ws*(zoom||1),dw=HWW*s,dh=HWH*s;g.drawImage(hwImg,Math.round(cx-dw/2),Math.round(H/2-dh/2),dw,dh)}
+  function wpt(px,py){return[cx+(px-HWW/2)*ws,H/2+(py-HWH/2)*ws]}
+  function inset(f){var w=58,h=70,x=Math.round(cx-116+(sh?(Math.random()-.5)*3:0)),y=28;R(x-3,y-3,w+6,h+6,'#14131b');R(x-2,y-2,w+4,h+4,'#f4f1e6');
+    g.save();g.beginPath();g.rect(x,y,w,h);g.clip();var s=w*1.25/HFW;g.drawImage(hfImg,f*HFW,0,HFW,HFH,x-(HFW*s-w)/2,y-HFH*s*.14,HFW*s,HFH*s);g.restore()}
+  var showWide=false;
+  if(ph==='wake')closeup(tt<1.6?0:tt<3.8?(Math.sin((tt-1.6)*5)>.2?1:0):1,1+.03*Math.sin(t*.8));
+  else if(ph==='look')closeup(2,1,Math.sin(tt*2.6)*3);
+  else if(ph==='cuff'){
+    if(tt<1){var u=tt*tt*(3-2*tt);wide(1+.45*(1-u));g.globalAlpha=1-u;closeup(2,1+.2*u);g.globalAlpha=1;showWide=u>.5}
+    else if(tt<2.3){wide(1);showWide=true}
+    else closeup(3,1+.04*Math.min(1,(tt-2.3)*4))}
+  else if(ph==='break'){wide(1);showWide=true}
+  else closeup(5,1+.03*Math.sin(t*6));
+  if(showWide){[[-1,452,386],[1,1082,386]].forEach(function(c){var pull=c[0]<0?HS.pullL:HS.pullR,pt=wpt(c[1],c[2]);
+      if(pull>.35)for(i=0;i<5;i++){var a=i*1.3+t*20,r=5+pull*9;R(pt[0]+Math.cos(a)*r,pt[1]+Math.sin(a)*r*.7,i%2?3:2,1,i%2?'#fff7c2':'#ffffff')}
+      if(ph==='break'&&((c[0]<0&&HS.brokeL)||(c[0]>0&&HS.brokeR)))burst('FREE',pt[0],pt[1]-16,6,'#7df0a0',t-9)});
+    if(ph==='break')inset(4)}
+  if(HS.say&&t-HS.sayT<1){if(HS.say==='!')bubble(cx+44,22,'!',false);else burst(HS.say,cx+(HS.brokeR?80:-80),H*.55,12,'#ffd27a',HS.sayT)}
+  if(ph==='look'&&tt>.8)bubble(cx+52,14,'?',false);
+  g.setTransform(2,0,0,2,0,0);
+  var cap=ph==='wake'?(tt>1?['beep...','beep...  beep...','beep...  beep...  beep...'][Math.min(2,((tt-1)/1.6)|0)]:''):ph==='look'?'WHERE AM I?':ph==='cuff'&&tt>2.3?'CUFFED TO THE BED!?':'';
+  if(cap){R(0,H-34,W,22,'rgba(12,14,24,.72)');g.font='8px "Press Start 2P", monospace';g.textAlign='center';g.textBaseline='top';g.fillStyle='#ffffff';g.fillText(cap,W/2,H-27)}
+  var vg=g.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,W*.7);vg.addColorStop(0,'rgba(5,10,25,0)');vg.addColorStop(1,'rgba(5,10,25,.45)');g.fillStyle=vg;g.fillRect(0,0,W,H);
+  if(HS.flash>0)R(0,0,W,H,'rgba(255,255,255,'+(HS.flash*.5).toFixed(2)+')');
+  if(HS.white>0)R(0,0,W,H,'rgba(255,255,255,'+HS.white.toFixed(2)+')')}
+
+function drawHosp(){if(ok(hfImg)&&ok(hwImg)){drawHospArt();return}
+var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,i,k=HS.k*HS.k*(3-2*HS.k),z=1.75-.75*k,fy=92,ty=(108+(fy-108)*k)-fy*z,sh=HS.shake;
   var free=ph==='free'||ph==='end',brk=ph==='break';
   g.setTransform(2,0,0,2,0,0);R(0,0,W,H,'#b7cdc8');
   g.setTransform(2*z,0,0,2*z,2*(cx-cx*z)+(sh?(Math.random()-.5)*8*sh:0),2*ty+(sh?(Math.random()-.5)*6*sh:0));
