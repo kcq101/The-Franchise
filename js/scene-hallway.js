@@ -47,8 +47,8 @@ function hallUpdate(dt){var tt=S.clock-HL.t0,t=S.clock,i,o;
   else if(HL.ph==='land'){
     if(!HL.landed&&tt>=HALL_TI){HL.landed=true;HL.shake=1.4;HL.flash=.8;thump(.4,true);HL.say='THOOM!';HL.sayT=t;
       if(audio())try{var n0=ac.currentTime;tone(n0,70,.7,'sine',.4,0,sfxG,30);noise(n0,.5,.25,'lowpass',300,.7);for(i=0;i<10;i++)tone(n0+.25+Math.random()*.9,2000+Math.random()*3000,.07,'triangle',.02+Math.random()*.02)}catch(e){}}
-    if(tt>HALL_TI+3.2){hlphase('end');S.mode='over';S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
-      endText.textContent='Frank drops four floors and lands in a crouch on the street outside Rushville General. He is out.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
+    if(tt>HALL_TI+3.6){hlphase('end');S.mode='over';S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
+      endText.textContent='Frank drops four floors, lands on his feet with one hand on the pavement, and stands. He is out.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
   var on=Math.ceil(HL.p*6-.001);for(i=0;i<6;i++)segs[i].className=i<on?'on':''}
 
 /* ---------- drawing ---------- */
@@ -159,6 +159,9 @@ function drawHallOutside(t,tt){var i,u=Math.min(1,tt/3),bw=Math.round(W*.4),wy=5
 
 /* ---------- the cinematic after the window: the fall, then the landing ---------- */
 function gownAt(f,x,y,rot,sc,sy){if(!ok(gownImg))return;g.save();g.translate(x,y);g.rotate(rot||0);g.scale(sc||1,(sc||1)*(sy||1));g.drawImage(gownImg,f*GW,0,GW,GH,-GW/4,-GH/4,GW/2,GH/2);g.restore()}
+/* the cutscene poses: 0 free-fall, 1 bracing, 2 three-point landing head down, 3 head up, 4 rising */
+var landImg=load('land.png'),LW=193,LH=182;
+function landAt(f,x,y,rot,sc,sy){g.save();g.translate(x,y);g.rotate(rot||0);g.scale(sc||1,(sc||1)*(sy||1));g.drawImage(landImg,f*LW,0,LW,LH,-LW/4,-LH/2,LW/2,LH/2);g.restore()}
 function letterbox(){g.setTransform(2,0,0,2,0,0);R(0,0,W,16,'#000');R(0,H-16,W,16,'#000');if(HL.flash>0)R(0,0,W,H,'rgba(255,255,255,'+Math.min(1,HL.flash*.8).toFixed(2)+')')}
 function drawHallFall(t,tt){var i,bw=Math.round(W*.44),u=tt/2.6;
   R(-8,-8,W+16,H+16,'#0a1030');
@@ -171,7 +174,7 @@ function drawHallFall(t,tt){var i,bw=Math.round(W*.44),u=tt/2.6;
   var fx=W*.63+Math.sin(t*2.1)*5,fy=104+Math.sin(t*3.3)*4-(1-Math.min(1,tt/.5))*70;
   for(i=0;i<22;i++){var a=i*2.4,rx=fx+Math.cos(a)*(30+(i*13)%70),ry=((i*47-t*(60+(i%5)*22))%(H+20)+H+20)%(H+20)-10,s=2+(i%4);
     g.save();g.translate(rx,ry);g.rotate(t*(2+i%3)+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.globalAlpha=.85;g.beginPath();g.moveTo(0,-s);g.lineTo(s*.7,s*.6);g.lineTo(-s*.6,s*.4);g.closePath();g.fill();g.restore()}
-  gownAt(11,fx,fy,1.02+Math.sin(t*2.6)*.06,1.35+.25*u);
+  if(ok(landImg))landAt(0,fx,fy+48,.18+Math.sin(t*2.6)*.08,1.05+.2*u);else gownAt(11,fx,fy,1.02+Math.sin(t*2.6)*.06,1.35+.25*u);
   letterbox()}
 function drawHallLand(t,tt){var i,G=178,fx=Math.round(W*.56),hit=tt>=HALL_TI,k=Math.max(0,tt-HALL_TI),bw=Math.round(W*.5);
   R(-8,-8,W+16,H+16,'#0a1030');
@@ -182,8 +185,11 @@ function drawHallLand(t,tt){var i,G=178,fx=Math.round(W*.56),hit=tt>=HALL_TI,k=M
   if(hit){g.strokeStyle='rgba(8,8,16,.8)';g.lineWidth=1.2;g.beginPath();for(i=0;i<9;i++){var a=Math.PI*(.05+i*.112),len=(22+(i*17)%26)*Math.min(1,k*6);g.moveTo(fx,G+12);g.lineTo(fx+Math.cos(a)*len*1.6,G+12+Math.sin(a)*len*.28+(i%2?3:-2));}g.stroke();
     for(i=0;i<10;i++){var d=(i%2?1:-1)*(14+k*70+(i>>1)*9),r=5+k*16+(i%3)*2,al=Math.max(0,.55-k*.6);g.fillStyle='rgba(205,210,225,'+al.toFixed(2)+')';g.beginPath();g.arc(fx+d,G+10-k*8-(i%3)*3,r,0,TAU);g.fill()}}
   R(fx-22,G+12,44,3,'rgba(0,0,0,.5)');
-  if(!hit){var u=tt/HALL_TI;gownAt(11,fx-40+40*u,-50+(G-40+50)*u*u,1.15,1.25)}
-  else{var sq=Math.min(1,k/.22),rise=k>1.9?Math.min(1,(k-1.9)/.5):0;gownAt(8,fx,G-32+(1-sq)*5-rise*2,0,1.3,.84+.16*sq)}
+  if(ok(landImg)){
+    if(!hit){var u=tt/HALL_TI;landAt(1,fx-26+26*u,-30+(G+14+30)*u*u,0,1)}
+    else{var sq=Math.min(1,k/.2);landAt(k<1.1?2:k<2.5?3:4,fx+(k>=2.5?4:0),G+14,0,1,.86+.14*sq)}}
+  else if(!hit){var u2=tt/HALL_TI;gownAt(11,fx-40+40*u2,-50+(G-40+50)*u2*u2,1.15,1.25)}
+  else{var sq2=Math.min(1,k/.22);gownAt(8,fx,G-32+(1-sq2)*5,0,1.3,.84+.16*sq2)}
   /* glass coming down after him */
   if(hit&&k<1.6)for(i=0;i<18;i++){var gy=-20+((k*190+i*29)%(G+30)),gx=fx-90+(i*23)%180;if(gy<G+8){g.save();g.translate(gx,gy);g.rotate(k*6+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.fillRect(-2,-1,4,2);g.restore()}}
   if(HL.say==='THOOM!'&&t-HL.sayT<1.2)burst('THOOM!',fx,G-70,16,'#ffd27a',HL.sayT);

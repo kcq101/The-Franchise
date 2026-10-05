@@ -52,6 +52,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `mark2.png` | Hero: shouting, winded, kneeling, on his back |
 | `limp.png` | Hero: 6-frame limp |
 | `gown.png` | Hero in his hospital gown: 8 run, tucked jump, hurdle, slide, dive |
+| `land.png` | Hero in his gown for the cutscene: free-fall, bracing, three-point landing (head down, head up), rising |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |
