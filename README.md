@@ -51,6 +51,6 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `qb.png`, `lineman.png`, `defender.png` | Football players |
 | `sec1.webp` to `sec5.webp`, `sky.webp`, `street.webp` | Alley walls, skyline, street |
 | `stands.png` | Stadium backdrop |
-| `hosp_faces.webp`, `hosp_wide.webp` | Hospital: six close-up face panels, and the wide shot of the bed |
+| `hosp_faces.webp`, `hosp_wide.webp` | Hospital: five close-up face panels, and three wide shots of the bed (cuffed, left free, both free) |
 | `title2.webp`, `portrait.png` | Title art and HUD portrait |
 | `title2.mp3`, `game.mp3` | Title and gameplay music |

@@ -30,32 +30,35 @@ function hospUpdate(dt){var tt=S.clock-HS.t0;
   var f=blur>.3||bright>1.02?'blur('+blur.toFixed(1)+'px) brightness('+bright.toFixed(2)+')':'';if(cv.style.filter!==f)cv.style.filter=f;
   var on=Math.ceil(HS.p*6-.001);for(var i=0;i<6;i++)segs[i].className=i<on?'on':''}
 
-var hfImg=load('hosp_faces.webp'),hwImg=load('hosp_wide.webp'),HFW=248,HFH=352,HWW=1536,HWH=660;
-/* The art version: six close-up face panels and one wide shot of the bed. */
+var hfImg=load('hosp_faces.webp'),hwImg=load('hosp_wide.webp'),HFW=421,HFH=720,HWW=656,HWH=728,HWY0=120,HWY1=524;
+/* The art version: five close-up face panels (asleep, groggy, confused, alarmed, straining)
+   and three wide shots of the bed (both wrists cuffed, left free, both free). */
 function drawHospArt(){var t=S.clock,tt=t-HS.t0,ph=HS.ph,cx=W/2,sh=HS.shake,i;
-  g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);R(-8,-8,W+16,H+16,'#1b2742');
-  /* a face panel filling the screen height; the pillow at the edges of the first panel is stretched to fill the sides */
-  function closeup(f,zoom,dx,ay){var s=H*1.32*(zoom||1)/HFH,dw=HFW*s,dh=HFH*s,x=Math.round(cx-dw/2+(dx||0)),y=Math.round(H/2-dh*(ay||.47));
-    g.drawImage(hfImg,3,0,4,HFH,-8,y,x+9,dh);g.drawImage(hfImg,HFW-7,0,4,HFH,x+dw-1,y,W-x-dw+9,dh);g.drawImage(hfImg,f*HFW,0,HFW,HFH,x,y,dw,dh)}
-  var ws=Math.max(W/HWW,H/HWH);
-  function wide(zoom){var s=ws*(zoom||1),dw=HWW*s,dh=HWH*s;g.drawImage(hwImg,Math.round(cx-dw/2),Math.round(H/2-dh/2),dw,dh)}
-  function wpt(px,py){return[cx+(px-HWW/2)*ws,H/2+(py-HWH/2)*ws]}
-  function inset(f){var w=58,h=70,x=Math.round(cx-116+(sh?(Math.random()-.5)*3:0)),y=28;R(x-3,y-3,w+6,h+6,'#14131b');R(x-2,y-2,w+4,h+4,'#f4f1e6');
-    g.save();g.beginPath();g.rect(x,y,w,h);g.clip();var s=w*1.25/HFW;g.drawImage(hfImg,f*HFW,0,HFW,HFH,x-(HFW*s-w)/2,y-HFH*s*.14,HFW*s,HFH*s);g.restore()}
-  var showWide=false;
+  g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);R(-8,-8,W+16,H+16,'#141d36');
+  /* a face panel: the middle band of the tall panel fills the screen height, and its pillow edges are stretched to fill the sides */
+  function closeup(f,zoom,dx){var s=H*1.55*(zoom||1)/HFH,dw=HFW*s,dh=HFH*s,x=Math.round(cx-dw/2+(dx||0)),y=Math.round(H/2-dh*.47);
+    g.drawImage(hfImg,f*HFW+4,0,5,HFH,-8,y,x+9,dh);g.drawImage(hfImg,f*HFW+HFW-9,0,5,HFH,x+dw-1,y,W-x-dw+9,dh);g.drawImage(hfImg,f*HFW,0,HFW,HFH,x,y,dw,dh)}
+  /* a wide shot: the band from above his raised fists down to the cuffs, over a dimmed, stretched copy that fills the sides */
+  var wsH=HWY1-HWY0,wz=1,ws=H/wsH;
+  function wide(n,zoom){wz=zoom||1;var s=ws*wz,dw=HWW*s,dh=wsH*s,x=Math.round(cx-dw/2),y=Math.round(H/2-dh/2);
+    if(dw<W){g.drawImage(hwImg,n*HWW,HWY0,HWW,wsH,-8,y,W+16,dh);R(-8,-8,W+16,H+16,'rgba(10,14,32,.62)')}
+    g.drawImage(hwImg,n*HWW,HWY0,HWW,wsH,x,y,dw,dh);
+    if(dw<W){var e=g.createLinearGradient(x,0,x+10,0);e.addColorStop(0,'rgba(10,14,32,.75)');e.addColorStop(1,'rgba(10,14,32,0)');g.fillStyle=e;g.fillRect(x,0,10,H);
+      e=g.createLinearGradient(x+dw,0,x+dw-10,0);e.addColorStop(0,'rgba(10,14,32,.75)');e.addColorStop(1,'rgba(10,14,32,0)');g.fillStyle=e;g.fillRect(x+dw-10,0,10,H)}}
+  function wpt(px,py){var s=ws*wz;return[cx+(px-HWW/2)*s,H/2+(py-HWY0-wsH/2)*s]}
+  var shot=-1,pulse=1+.012*Math.max(HS.pullL,HS.pullR);
   if(ph==='wake')closeup(tt<1.6?0:tt<3.8?(Math.sin((tt-1.6)*5)>.2?1:0):1,1+.03*Math.sin(t*.8));
   else if(ph==='look')closeup(2,1,Math.sin(tt*2.6)*3);
   else if(ph==='cuff'){
-    if(tt<1){var u=tt*tt*(3-2*tt);wide(1+.45*(1-u));g.globalAlpha=1-u;closeup(2,1+.2*u);g.globalAlpha=1;showWide=u>.5}
-    else if(tt<2.3){wide(1);showWide=true}
-    else closeup(3,1.72+.05*Math.min(1,(tt-2.3)*4),0,.455)}   /* tight on the eyes: his hands are still cuffed, so keep the raised hands in this panel off screen */
-  else if(ph==='break'){wide(1);showWide=true}
-  else closeup(5,1+.03*Math.sin(t*6));
-  if(showWide){[[-1,452,386],[1,1082,386]].forEach(function(c){var pull=c[0]<0?HS.pullL:HS.pullR,pt=wpt(c[1],c[2]);
-      if(pull>.35)for(i=0;i<5;i++){var a=i*1.3+t*20,r=5+pull*9;R(pt[0]+Math.cos(a)*r,pt[1]+Math.sin(a)*r*.7,i%2?3:2,1,i%2?'#fff7c2':'#ffffff')}
-      if(ph==='break'&&((c[0]<0&&HS.brokeL)||(c[0]>0&&HS.brokeR)))burst('FREE',pt[0],pt[1]-16,6,'#7df0a0',t-9)});
-    if(ph==='break')inset(4)}
-  if(HS.say&&t-HS.sayT<1){if(HS.say==='!')bubble(cx+44,22,'!',false);else burst(HS.say,cx+(HS.brokeR?80:-80),H*.55,12,'#ffd27a',HS.sayT)}
+    if(tt<1){var u=tt*tt*(3-2*tt);shot=0;wide(0,1+.4*(1-u));g.globalAlpha=1-u;closeup(2,1+.2*u);g.globalAlpha=1}
+    else if(tt<2.3){shot=0;wide(0,pulse)}
+    else closeup(3,1+.04*Math.min(1,(tt-2.3)*4))}
+  else if(ph==='break'){shot=HS.brokeL?1:0;wide(shot,pulse)}
+  else{shot=2;wide(2,1+.015*Math.sin(t*7))}
+  /* sparks at whichever cuff is being yanked */
+  if(shot===0||shot===1)[[-1,121,466],[1,496,470]].forEach(function(c){if(c[0]<0&&shot===1)return;var pull=c[0]<0?HS.pullL:HS.pullR,pt=wpt(c[1],c[2]);
+    if(pull>.35)for(i=0;i<6;i++){var a=i*1.05+t*20,r=5+pull*10;R(pt[0]+Math.cos(a)*r,pt[1]+Math.sin(a)*r*.7,i%2?3:2,1,i%2?'#fff7c2':'#ffffff')}});
+  if(HS.say&&t-HS.sayT<1){if(HS.say==='!')bubble(cx+40,18,'!',false);else burst(HS.say,cx+(HS.brokeR?70:-70),H*.3,12,'#ffd27a',HS.sayT)}
   if(ph==='look'&&tt>.8)bubble(cx+52,14,'?',false);
   g.setTransform(2,0,0,2,0,0);
   var cap=ph==='wake'?(tt>1?['beep...','beep...  beep...','beep...  beep...  beep...'][Math.min(2,((tt-1)/1.6)|0)]:''):ph==='look'?'WHERE AM I?':ph==='cuff'&&tt>2.3?'CUFFED TO THE BED!?':'';
