@@ -53,4 +53,4 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `stands.png` | Stadium backdrop |
 | `hosp_faces.webp`, `hosp_wide.webp` | Hospital: five close-up face panels, and three wide shots of the bed (cuffed, left free, both free) |
 | `title2.webp`, `portrait.png` | Title art and HUD portrait |
-| `title2.mp3`, `game.mp3` | Title and gameplay music |
+| `game.mp3`, `hospital.mp3` | Gameplay music and the hospital voice track. The title screen has no track at the moment; set `TITLE_TRACK` in `js/audio.js` to add one |

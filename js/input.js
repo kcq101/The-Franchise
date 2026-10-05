@@ -1,7 +1,7 @@
 /* Title screen, L and R buttons, keyboard, sound toggle, and what a tap does in each alley scene. */
-function reset(){HS.ph='';cv.style.filter='';S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
+function reset(){HS.ph='';cv.style.filter='';hospMus.pause();S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
   padL.disabled=padR.disabled=false;padL.classList.add('next');padR.classList.add('next');scoreEl.textContent='000000';track.style.width='0%'}
-function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();titleEl.hidden=true;reset();[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
+function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();primeHospMusic();titleEl.hidden=true;reset();[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
   try{var el=document.documentElement;if(window.matchMedia('(pointer:coarse)').matches&&el.requestFullscreen)el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){})}catch(e){}}
 var titleHint=document.getElementById('titlehint');titleEl.addEventListener('click',begin);playTitle();
 function step(side){
@@ -37,5 +37,5 @@ window.addEventListener('keydown',function(e){if(e.repeat)return;var k=e.key.toL
 window.addEventListener('keyup',function(){padL.classList.remove('down');padR.classList.remove('down')});
 document.getElementById('again').addEventListener('click',reset);
 var sndBtn=document.getElementById('snd');sndBtn.addEventListener('click',function(){muted=!muted;sndBtn.textContent=muted?'SOUND OFF':'SOUND ON';if(!muted)audio();if(master)master.gain.value=muted?0:1;
-  if(muted){gameMus.pause();titleMus.pause()}else if(S.mode!=='title'){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}});
-document.addEventListener('visibilitychange',function(){if(document.hidden){gameMus.pause();titleMus.pause()}else if(!muted){var p=(S.mode==='title'?(titleOn?titleMus:null):gameMus);if(p){p=p.play();if(p&&p.catch)p.catch(function(){})}}});
+  if(muted){gameMus.pause();titleMus.pause();hospMus.pause()}else if(S.mode!=='title'){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}});
+document.addEventListener('visibilitychange',function(){if(document.hidden){gameMus.pause();titleMus.pause();hospMus.pause()}else if(!muted){var p=(S.mode==='title'?(titleOn?titleMus:null):gameMus);if(p){p=p.play();if(p&&p.catch)p.catch(function(){})}}});

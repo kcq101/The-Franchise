@@ -45,11 +45,16 @@ function siren(){if(!audio())return;try{var t=ac.currentTime;
   /* two short air-horn blasts as the cars pull up */
   [0,.42].forEach(function(d){tone(t+d,196,.3,'sawtooth',.09,900);tone(t+d,247,.3,'sawtooth',.07,900)})}catch(e){}}
 /* ---- ambience events and music, scheduled a little ahead of the clock ---- */
-var titleMus=new Audio('assets/audio/title2.mp3'),gameMus=new Audio('assets/audio/game.mp3'),TVOL=.6,GVOL=.32,titleOn=false;
+/* TITLE_TRACK is the opening music file in assets/audio; leave it empty to have a silent title screen. */
+var TITLE_TRACK='',titleMus=TITLE_TRACK?new Audio('assets/audio/'+TITLE_TRACK):new Audio(),gameMus=new Audio('assets/audio/game.mp3'),hospMus=new Audio('assets/audio/hospital.mp3'),TVOL=.6,GVOL=.32,HVOL=.9,titleOn=false;
+hospMus.preload='auto';hospMus.volume=HVOL;
 titleMus.loop=true;gameMus.loop=true;titleMus.preload='auto';gameMus.preload='auto';titleMus.volume=TVOL;gameMus.volume=GVOL;
 /* some phones ignore element volume, so the level they played at was 1; halve whichever level was actually heard */
 var GLEVEL=(Math.abs(gameMus.volume-GVOL)<.02?GVOL:1)*.5,gmG=null;
-function playTitle(){if(muted)return;var p=titleMus.play();if(p&&p.then)p.then(function(){titleOn=true;titleHint.textContent='TAP TO START'},function(){titleOn=false;titleHint.textContent='TAP FOR SOUND'});else titleOn=true}
+function playTitle(){if(!TITLE_TRACK){titleOn=true;return}if(muted)return;var p=titleMus.play();if(p&&p.then)p.then(function(){titleOn=true;titleHint.textContent='TAP TO START'},function(){titleOn=false;titleHint.textContent='TAP FOR SOUND'});else titleOn=true}
+/* phones only let a track start later on its own if it was first started from a tap, so prime the hospital track here */
+function primeHospMusic(){try{hospMus.muted=true;var p=hospMus.play();if(p&&p.then)p.then(function(){hospMus.pause();hospMus.currentTime=0;hospMus.muted=false},function(){hospMus.muted=false})}catch(e){}}
+function startHospMusic(){try{hospMus.muted=false;hospMus.currentTime=0;if(!muted){var p=hospMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function startGameMusic(){try{titleMus.pause();gameMus.currentTime=0;if(!muted){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function mstate(){return null;var m=S.mode,p=C.ph;
   if(m==='ready')return{bpm:112,bass:1,hat:1,prog:[0,0,-4,-2]};
@@ -72,7 +77,7 @@ function tick(){if(!ac||ac.state!=='running')return;var now=ac.currentTime,st=ms
   var inHosp=S.mode==='hosp'||(S.mode==='over'&&HS.ph),inDream=(S.mode==='dream'||S.mode==='over')&&!inHosp;ambG.gain.setTargetAtTime(S.mode==='title'?0:inDream?.15:inHosp?.07:1,now,.5);
   if(crowdG)crowdG.gain.setTargetAtTime(inDream?(D.ph==='scoop'?.07:.032+.012*Math.sin(now*.9)):0,now,.6);
   droneG.gain.setTargetAtTime(0,now,.3);
-  var duck=S.mode==='cut'&&(C.ph==='knife'||C.ph==='fall')?.3:(S.mode==='hosp'&&HS.ph==='wake')?.3:1,gv=GLEVEL*duck;if(gmG)gmG.gain.setTargetAtTime(gv,now,.25);else if(Math.abs(gameMus.volume-gv)>.01)gameMus.volume+=(gv-gameMus.volume)*.08;
+  var duck=S.mode==='cut'&&(C.ph==='knife'||C.ph==='fall')?.3:(inHosp&&!hospMus.paused)?.22:1,gv=GLEVEL*duck;if(gmG)gmG.gain.setTargetAtTime(gv,now,.25);else if(Math.abs(gameMus.volume-gv)>.01)gameMus.volume+=(gv-gameMus.volume)*.08;
   if(!st||st.silent||!st.bpm){M.next=now+.08;M.step=0}
   else{var d=60/st.bpm/4;if(M.next<now)M.next=now+.03;while(M.next<now+.14){try{sched(M.step,M.next,st,d)}catch(e){}M.next+=d;M.step=(M.step+1)%64;if(!M.step)M.phrase++}}
   if(S.mode==='title')return;

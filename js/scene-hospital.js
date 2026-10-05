@@ -2,7 +2,7 @@
 var HOSP_TAP=.034,HOSP_DECAY=.1;
 function hphase(n){HS.ph=n;HS.t0=S.clock}
 function startHosp(){S.mode='hosp';S.v=0;S.last=null;HS.p=0;HS.pullL=0;HS.pullR=0;HS.brokeL=false;HS.brokeR=false;HS.k=0;HS.white=1;HS.beat=0;HS.shake=0;HS.time=0;HS.say='';HS.clank=0;
-  hint.hidden=true;padsOn(false);lvl.innerHTML='RUSHVILLE GENERAL<br>LEVEL 1-3';barlab.textContent='CUFFS';track.style.width='0%';hphase('wake')}
+  startHospMusic();hint.hidden=true;padsOn(false);lvl.innerHTML='RUSHVILLE GENERAL<br>LEVEL 1-3';barlab.textContent='CUFFS';track.style.width='0%';hphase('wake')}
 function beep(){if(!audio())return;try{tone(ac.currentTime,990,.09,'sine',.05)}catch(e){}}
 function clank(v){if(!audio())return;try{var t=ac.currentTime,r=.9+Math.random()*.25;noise(t,.05,v,'highpass',3200,.7);tone(t,1750*r,.09,'triangle',v*.7);tone(t+.02,2600*r,.06,'triangle',v*.4)}catch(e){}}
 function snap(){if(!audio())return;try{var t=ac.currentTime;noise(t,.12,.3,'highpass',2400,.7);tone(t,2100,.25,'triangle',.2,0,sfxG,700);tone(t,160,.2,'sine',.3,0,sfxG,50)}catch(e){}}
