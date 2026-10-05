@@ -38,6 +38,8 @@ The title screen has a "Start at" menu for jumping straight to any of the five s
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
+Before committing a change, run `python3 stamp.py`. It puts a fresh version number on the stylesheet and script links in `index.html`, so browsers and GitHub Pages pick up the new files straight away and never mix old and new ones.
+
 ## Assets
 
 Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single rows of equal-size cells; cell sizes are hard-coded next to where each sheet is drawn.
