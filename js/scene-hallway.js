@@ -1,4 +1,4 @@
-/* The escape: Frank sprints down the hospital hallway, jumping and sliding past obstacles, then crashes out through the window at the end. Drawn in code. */
+/* The escape: Frank sprints down the hospital hallway, jumping and sliding past obstacles, then crashes out through the window at the end. The hallway is drawn in code; Frank uses the gown sprite sheet. */
 var HALL_LEN=2900,HALL_GY=180,HALL_CEIL=34,HALL_FLOOR=150;
 var HL={ph:'',t0:0,x:0,sp:0,jy:0,vy:0,slide:0,stun:0,p:1,obs:[],dodged:0,hits:0,white:0,shake:0,flash:0,say:'',sayT:0,step:0,style:false,shards:[]};
 var HALL_KINDS={gurney:{w:48,h:27},chair:{w:26,h:28},cart:{w:30,h:29},sign:{w:16,h:19},lamp:{w:38,high:1},bar:{w:42,high:1}};
@@ -59,11 +59,16 @@ function hallObstacle(o,x,t){var G=HALL_GY,INK='#16151c',i;
   else if(o.k==='bar'){box(x+16,G-50,5,50,'#5b6170');R(x+14,G-2,9,2,INK);box(x-22,G-50,40,8,'#f4c531');for(i=0;i<5;i++)R(x-20+i*8,G-50,4,8,INK);box(x-23,G-52,4,12,'#d8392c')}
   g.restore()}
 
-function hallFrank(fx,t){var f,base=HALL_GY+1-HL.jy;
+/* Frank in his hospital gown: frames 0-7 run, 8 tucked jump, 9 hurdle, 10 slide, 11 dive */
+var gownImg=load('gown.png'),GW=186,GH=138,GAX=93;
+function hallFrank(fx,t){var f,base=HALL_GY+1-HL.jy,i;
   R(fx-13+HL.jy*.1,HALL_GY,28-HL.jy*.25,2,'rgba(20,40,40,.4)');
+  if(ok(gownImg)){var sliding=HL.slide>0&&HL.jy<=0;
+    if(HL.ph==='leap')f=11;else if(sliding||HL.stun>.2)f=10;else if(HL.jy>0)f=HL.jy>26?8:9;else f=((HL.x/100*8)|0)%8;
+    if(sliding)for(i=0;i<3;i++)R(fx-30-i*9-((t*90)|0)%7,base-3-i*2,6,1,'rgba(255,255,255,.55)');
+    g.drawImage(gownImg,f*GW,0,GW,GH,Math.round(fx*2-GAX)/2+(f===10?4:0),base+.5-GH/2-(f===11?14:0),GW/2,GH/2);return}
   if(!ok(markImg)){R(fx-6,base-50,12,50,'#a3a6b0');return}
-  if(HL.slide>0&&HL.jy<=0){g.save();g.translate(fx-4,base);g.rotate(-1.02);g.drawImage(markImg,13*CW,0,CW,CH,-AX/2+4,1.5-CH/2,CW/2,CH/2);g.restore();
-    for(var i=0;i<3;i++)R(fx-26-i*9-((t*90)|0)%7,base-3-i*2,6,1,'rgba(255,255,255,.55)');return}
+  if(HL.slide>0&&HL.jy<=0){g.save();g.translate(fx-4,base);g.rotate(-1.02);g.drawImage(markImg,13*CW,0,CW,CH,-AX/2+4,1.5-CH/2,CW/2,CH/2);g.restore();return}
   if(HL.stun>.2)f=13;else if(HL.jy>0)f=HL.vy>0?2:6;else f=((HL.x/104*8)|0)%8;
   g.drawImage(markImg,f*CW,0,CW,CH,Math.round(fx*2-AX)/2,base+.5-CH/2,CW/2,CH/2)}
 
@@ -115,7 +120,8 @@ function drawHallOutside(t,tt){var i,u=Math.min(1,tt/3),bw=Math.round(W*.4),wy=5
   var gl=g.createRadialGradient(wx0+30,wy+22,4,wx0+30,wy+22,110);gl.addColorStop(0,'rgba(255,240,190,.45)');gl.addColorStop(1,'rgba(255,240,190,0)');g.save();g.globalCompositeOperation='lighter';g.fillStyle=gl;g.fillRect(wx0-90,wy-90,240,240);g.restore();
   for(i=0;i<HL.shards.length;i++){var s=HL.shards[i];g.save();g.translate(wx0+34+s.x*.9,wy+22+s.y*.9);g.rotate(s.r);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.globalAlpha=.9;g.beginPath();g.moveTo(0,-s.s);g.lineTo(s.s*.7,s.s*.6);g.lineTo(-s.s*.6,s.s*.4);g.closePath();g.fill();g.restore()}
   var px=wx0+30+u*(W*.5),py=wy+26-34*Math.sin(u*2.1)+70*u*u;
-  if(ok(markImg)){g.save();g.translate(px,py);g.rotate(-.25+u*.95);g.drawImage(markImg,2*CW,0,CW,CH,-CW/4,-CH/4,CW/2,CH/2);g.restore()}
+  if(ok(gownImg)){g.save();g.translate(px,py);g.rotate(-.3+u*.75);g.drawImage(gownImg,11*GW,0,GW,GH,-GW/4,-GH/2+18,GW/2,GH/2);g.restore()}
+  else if(ok(markImg)){g.save();g.translate(px,py);g.rotate(-.25+u*.95);g.drawImage(markImg,2*CW,0,CW,CH,-CW/4,-CH/4,CW/2,CH/2);g.restore()}
   if(HL.say==='CRASH!'&&t-HL.sayT<1.6)burst('CRASH!',wx0+70,wy-14,16,'#ffd27a',HL.sayT);
   g.setTransform(2,0,0,2,0,0);R(0,0,W,16,'#000');R(0,H-16,W,16,'#000');
   if(HL.flash>0)R(0,0,W,H,'rgba(255,255,255,'+(HL.flash*.8).toFixed(2)+')')}
