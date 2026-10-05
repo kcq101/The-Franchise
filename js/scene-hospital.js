@@ -24,7 +24,7 @@ function hospUpdate(dt){var tt=S.clock-HS.t0;
     if(tt>3.6){hphase('break');padsOn(true);S.last=null;hint.textContent='MASH L, R AS FAST AS YOU CAN!\nBREAK THE CUFFS';hint.hidden=false}}
   else if(HS.ph==='break'){HS.time+=dt;var floor=HS.brokeL?.5:0;HS.p=Math.max(floor,HS.p-HOSP_DECAY*dt);track.style.width=(HS.p*100).toFixed(1)+'%'}
   else if(HS.ph==='free'){track.style.width='100%';if(tt>2.6){hphase('end');S.mode='over';
-    endText.textContent='Frank snaps both cuffs off the bed rails. Now he has to get out of the hospital.';stat.innerHTML=S.stat+'<br>TO BE CONTINUED';endBox.hidden=false}}
+    endText.textContent='Frank snaps both cuffs off the bed rails. Now he has to get out of the hospital.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
   /* waking up: the picture starts blown-out and blurred and clears as he comes round */
   var blur=0,bright=1;if(HS.ph==='wake'){var u=Math.max(0,Math.min(1,(tt-2.4)/3.4));blur=12*(1-u*u*(3-2*u));bright=1+1.3*(1-Math.min(1,tt/5))}
   var f=blur>.3||bright>1.02?'blur('+blur.toFixed(1)+'px) brightness('+bright.toFixed(2)+')':'';if(cv.style.filter!==f)cv.style.filter=f;

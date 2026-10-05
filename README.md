@@ -6,6 +6,8 @@ A 90s-style 2D browser game. Frank, a quarterback, chases a ring thief down a Ru
 
 Open `index.html` in a browser, or serve the folder with any static web server. It is built for a phone held sideways; on a computer use the arrow keys or A and D.
 
+The title screen has a "Start at" menu for jumping straight to any of the five sequences, and the end box has a Levels button that returns to it.
+
 ## Controls
 
 | Scene | L / R |

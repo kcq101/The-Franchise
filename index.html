@@ -27,13 +27,22 @@
     <div id="hint" hidden></div>
     <div id="end" hidden>
       <p id="endtext"></p>
-      <div class="row"><span class="stat" id="stat"></span><button id="again" type="button">PLAY AGAIN</button></div>
+      <div class="row"><span class="stat" id="stat"></span><span class="btns"><button id="totitle" type="button">LEVELS</button><button id="again" type="button">PLAY AGAIN</button></span></div>
     </div>
     <button id="title" type="button" aria-label="Start game">
       <img class="bg" src="assets/img/title2.webp" alt="">
       <img class="art" src="assets/img/title2.webp" alt="The Franchise">
       <span id="titlehint">TAP TO START</span>
     </button>
+    <label id="lvlpick" for="lvlsel">START AT
+      <select id="lvlsel">
+        <option value="alley">1. ALLEY RUN</option>
+        <option value="scuffle">2. THE SCUFFLE</option>
+        <option value="stumble">3. THE STUMBLE</option>
+        <option value="fumble">4. THE FUMBLE</option>
+        <option value="wake">5. THE WAKE-UP</option>
+      </select>
+    </label>
   </div>
   <p class="turn">TURN YOUR PHONE SIDEWAYS FOR THE WIDE VIEW</p>
   <div class="pads">

@@ -1,8 +1,17 @@
 /* Title screen, L and R buttons, keyboard, sound toggle, and what a tap does in each alley scene. */
-function reset(){HS.ph='';cv.style.filter='';hospMus.pause();S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
+function reset(){S.stat='';HS.ph='';cv.style.filter='';hospMus.pause();S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
   padL.disabled=padR.disabled=false;padL.classList.add('next');padR.classList.add('next');scoreEl.textContent='000000';track.style.width='0%'}
-function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();primeHospMusic();titleEl.hidden=true;reset();[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
+function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();primeHospMusic();titleEl.hidden=true;lvlPick.hidden=true;reset();startLevel(lvlSel.value);[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
   try{var el=document.documentElement;if(window.matchMedia('(pointer:coarse)').matches&&el.requestFullscreen)el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){})}catch(e){}}
+var lvlPick=document.getElementById('lvlpick'),lvlSel=document.getElementById('lvlsel');
+/* Level select: put the game into the state each sequence normally starts from. */
+function startLevel(id){S.stat='';
+  if(id==='scuffle'){hint.hidden=true;S.mode='run';S.t=45;S.x=END;arrive();S.stat='';S.cam=END+29-W/2}
+  else if(id==='stumble'){C.vanGone=true;C.gp=0;C.k=0;C.hp=0;S.mode='run2';S.x=END;S.cam=Math.max(0,S.x-W*.3);S.last=null;S.v=0;S.t2=0;barlab.textContent='HEALTH';hint.textContent='TAP L, R TO STUMBLE ON';hint.hidden=false}
+  else if(id==='fumble'){startDream();D.white=1}
+  else if(id==='wake')startHosp()}
+function toTitle(){reset();hint.hidden=true;gameMus.pause();S.mode='title';begin.asked=0;titleEl.hidden=false;lvlPick.hidden=false;padL.classList.add('next');padR.classList.add('next');playTitle()}
+document.getElementById('totitle').addEventListener('click',toTitle);
 var titleHint=document.getElementById('titlehint');titleEl.addEventListener('click',begin);playTitle();
 function step(side){
   if(S.mode==='title'){begin();return}
