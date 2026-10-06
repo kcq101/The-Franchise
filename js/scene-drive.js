@@ -146,9 +146,9 @@ function driveUpdate(dt){var d=DR,i,c,sp,t=S.clock;d.t+=dt;d.shake=Math.max(0,d.
     if(sp<.45&&live>0)d.heat+=dt*.1;else if(sp>.8)d.heat-=dt*.03;
     d.heat=Math.max(0,Math.min(1,d.heat));
     if(d.heat>=1){d.ph='bust';d.bt=t;d.flash=1;drvFrank('EVER SINCE THAT FUMBLE...',2.6);d.burst={t:'BUSTED',t0:t,c:'#ff5a4a'};if(audio())try{siren()}catch(e){}}
-    if(d.z+DPZ>=DEND*DSEG){d.ph='end';S.mode='over';padsOn(false);hint.hidden=true;S.stat+='<br>DAMAGES: $'+d.dmg.toLocaleString('en-US')+(d.busts?'  BUSTED: '+d.busts:'');
-      endText.textContent='Frank takes the wheel of Moose\'s car and outruns half of Rushville. The sign said POLICE STATION. Frank said "Not yet." The bill is Moose\'s.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false;
-      if(d.eng)try{d.eng.g.gain.setTargetAtTime(0,ac.currentTime,.4)}catch(e){}}}
+    if(d.z+DPZ>=DEND*DSEG){d.ph='end';hint.hidden=true;if(d.busts)S.stat+='<br>BUSTED: '+d.busts;
+      /* on down the highway to the next level; the bill goes with them */
+      startStop()}}
   /* traffic and police */
   var pz=d.z+DPZ,px=d.x;
   for(i=d.cars.length-1;i>=0;i--){c=d.cars[i];var dz=c.z-pz;

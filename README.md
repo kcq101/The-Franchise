@@ -20,6 +20,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | Hospital bed | Alternate as fast as you can to break the cuffs |
 | Hospital hallway | R jumps, L slides |
 | The chase | Hold L or R to steer |
+| The stop | L or R picks one of two lies; either pad skips a line |
 
 ## How it is put together
 
@@ -40,6 +41,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
 | `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank runs round to the driver's side and makes him move over, takes the wheel and drives off |
 | `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
+| `js/scene-stop.js` | The stop (level 2-2): the talking level at the Jawn, where every answer is a lie, and the drive-off with the pump |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
@@ -65,6 +67,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `drive_bld2.png` | More fronts: barber, bakery, bar, laundry, bank, hardware store |
 | `drive_bld3.png` | More fronts: motel, arcade, fire station, tenement, gas station, record shop |
 | `drive_mart2.png` | The Jawn convenience store and gas station, out on the open road between towns (`drive_mart.png` is the earlier version, kept but unused) |
+| `stop_inside.webp` | Inside the Jawn: the counter, the pick-up window and the two ordering screens |
 | `drive_scn.png` | Roadworks and waterfront scenery for the chase: excavator, mixer, crane tower, pipes, arrow board, fence, floodlight, clam shack, lighthouse, boat, containers, dock crane, pier, seafood restaurant |
 | `drive_station.png` | The Rushville police station at the end of the left fork |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
