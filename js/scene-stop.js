@@ -93,14 +93,16 @@ function stopCar(x,by,sc,rot,full){if(!ok(carImg))return;var w=CARW/2.6,h=CARH/2
   if(full){g.beginPath();g.rect(74.5,4.2,32,15.4);g.clip();gownAt(0,SEATX,SEATY,0,SEATS);g.translate(82,21);g.scale(1.2,1.2);g.translate(-88,-19.4);g.drawImage(carImg,0,3*CARH,252,CARH,0,0,252/2.6,h)}
   g.restore()}
 var STOP_IN=13.7;   /* seconds of arrival before the scene cuts inside */
-/* the two regulars eating on the double bin by the doors; a is the one who talks */
-function stopGuys(bx,by,t,talk){var i;R(bx-1,by-12,20,13,OUT);R(bx,by-11,9,11,'#2d4a3a');R(bx+9,by-11,9,11,'#3a4a66');R(bx,by-11,18,2,'#55607a');R(bx+3,by-7,3,1,'#0c0c12');R(bx+12,by-7,3,1,'#0c0c12');
+/* the two regulars eating at the double bin by the doors (the blocks below are only a fallback for when the picture has not loaded) */
+var guysImg=load('stop_guys.png'),GUYS=[[0,158,75],[160,158,75],[320,180,75]];   /* both chewing, the first one talking, the second one talking: x, width, and where the middle of the bin is */
+function stopGuys(bx,by,t,talk){var i;
+  if(ok(guysImg)){var c=GUYS[talk===0?1:talk===1?2:0],k=.21;g.drawImage(guysImg,c[0],0,c[1],150,bx+9-c[2]*k,by+1-150*k,c[1]*k,150*k);return}R(bx-1,by-12,20,13,OUT);R(bx,by-11,9,11,'#2d4a3a');R(bx+9,by-11,9,11,'#3a4a66');R(bx,by-11,18,2,'#55607a');R(bx+3,by-7,3,1,'#0c0c12');R(bx+12,by-7,3,1,'#0c0c12');
   for(i=0;i<2;i++){var x=bx+4+i*9,bob=talk===i?Math.round(Math.abs(Math.sin(t*9))):0,y=by-11-bob;
     R(x-2,y+1,2,6,i?'#3b3f55':'#5a4a36');R(x+1,y+1,2,6,i?'#3b3f55':'#5a4a36');R(x-2,y+7,2,1,'#f6f3e8');R(x+1,y+7,2,1,'#f6f3e8');
     R(x-3,y-7,6,8,OUT);R(x-2.5,y-6.5,5,7,i?'#c9a227':'#2f7d4f');R(x-2,y-11,4,4,OUT);R(x-1.5,y-10.5,3,3,i?'#8d5a3b':'#e0aa82');R(x-2,y-12,4,2,i?'#1a1a26':'#b4231c');
     var chew=((t*3+i)|0)%2;R(x+(i?-5:2),y-5-(talk===i?0:chew),3,2,'#e8c98a');R(x+(i?-5:2),y-4-(talk===i?0:chew),3,1,'#c2281f')}}
 function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=MW*243/947,G=174,sc=.8,cw=CARW/2.6*sc,cx=x0+288,px=x0+329,py=G-22,carX=cx,rot=0,i;
-  var door=[x0+111,G-6],bin=[x0+133,G-6],seat=[cx+cw*.5,G+12],SD=.27,SN=.6;
+  var door=[x0+111,G-6],bin=[x0+140,G-6],seat=[cx+cw*.5,G+12],SD=.27,SN=.6;
   /* the camera pushes in on the doors while the regulars talk, and starts there on the way out */
   var zu=leaving?Math.max(0,1-tt/.9):Math.max(0,Math.min(1,(tt-5.9)/1.3));zu=zu*zu*(3-2*zu);var Z=1+1.5*zu,fcx=W/2+(door[0]+14-W/2)*zu,fcy=H*.55+(door[1]-16-H*.55)*zu;
   function T(x,y){return [W/2+(x-fcx)*Z,H*.55+(y-fcy)*Z]}
@@ -133,7 +135,7 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
   if(!leaving)stopCar(carX,G+12,sc,rot,inCar);
   if(leaving&&tt>2.2&&tt<3.6)for(i=0;i<8;i++){var c=tt-2.2-i*.05;if(c>0&&c<1){g.fillStyle='rgba(215,218,230,'+(.45*(1-c)).toFixed(2)+')';g.beginPath();g.arc(cx+20-c*40+i*6,G+8-c*14,4+c*14,0,TAU);g.fill()}}
   g.restore();
-  var cb=T(carX+cw*.5,G+12-CARH/2.6*sc-4),bx=cb[0],by=cb[1],ga=T(bin[0]+4,bin[1]-25),gb=T(bin[0]+13,bin[1]-25);
+  var cb=T(carX+cw*.5,G+12-CARH/2.6*sc-4),bx=cb[0],by=cb[1],ga=T(bin[0]-1,bin[1]-30),gb=T(bin[0]+19,bin[1]-30);
   if(!leaving){if(tt>2.1&&tt<3.2)stopBubble(bx,by,'WE NEED GAS.');else if(tt>3.3&&tt<4.3)stopBubble(bx,by,'I NEED A HOAGIE.','#c2281f');else if(tt>4.4&&tt<5.5)stopBubble(bx,by,'YOU NEED PANTS.');
     else if(tt>7.3&&tt<8.8)stopBubble(ga[0],ga[1],'YO. GOWN GUY.');else if(tt>8.9&&tt<11)stopBubble(ga[0],ga[1],'DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT.',null,W<400?18:24);
     else if(tt>11.1&&tt<12.2&&fp){var fb=T(fp[0],fp[1]);stopBubble(fb[0],fb[1],"I DON'T NEED A STORY.",'#c2281f')}else if(tt>12.3&&tt<13.4)stopBubble(gb[0],gb[1],'He needs a story.')}
