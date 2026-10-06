@@ -1,5 +1,5 @@
 /* Title screen, L and R buttons, keyboard, sound toggle, and what a tap does in each alley scene. */
-function reset(){S.stat='';HS.ph='';HL.ph='';cv.style.filter='';hospWanted=false;hospMus.pause();S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
+function reset(){S.stat='';if(typeof drvStop==='function')drvStop();HS.ph='';HL.ph='';cv.style.filter='';hospWanted=false;hospMus.pause();S.mode='ready';S.x=START;S.v=0;S.last=null;S.t=0;S.miss=0;S.bang=0;S.score=0;S.cam=0;endBox.hidden=true;hint.textContent=RUNHINT;hint.hidden=false;tug.hidden=true;barlab.textContent='SPEED';C.ph='';C.k=0;C.hp=6;C.rot=0;C.flash=0;C.shake=0;C.vanx=0;C.vanGone=false;D.ph='';D.white=0;D.wait=0;lvl.innerHTML='RUSHVILLE<br>LEVEL 1-1';
   padL.disabled=padR.disabled=false;padL.classList.add('next');padR.classList.add('next');scoreEl.textContent='000000';track.style.width='0%'}
 function begin(){if(S.mode!=='title')return;if(!titleOn&&!muted&&(begin.asked=(begin.asked||0)+1)<=2){playTitle();return}audio();startGameMusic();titleEl.hidden=true;lvlPick.hidden=true;verEl.hidden=true;reset();startLevel(lvlSel.value);primeHospMusic();[262,330,392,523].forEach(function(f,i){setTimeout(function(){blip(f,.1,.035)},i*90)});
   try{var el=document.documentElement;if(window.matchMedia('(pointer:coarse)').matches&&el.requestFullscreen)el.requestFullscreen().then(function(){if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){})}).catch(function(){})}catch(e){}}
@@ -11,7 +11,8 @@ function startLevel(id){S.stat='';
   else if(id==='fumble'){startDream();D.white=1}
   else if(id==='wake')startHosp();
   else if(id==='escape')startHall();
-  else if(id==='getaway'){startHall();padsOn(false);hint.hidden=true;hlphase('land');HL.landed=false}}
+  else if(id==='getaway'){startHall();padsOn(false);hint.hidden=true;hlphase('land');HL.landed=false}
+  else if(id==='chase')startDrive()}
 function toTitle(){reset();hint.hidden=true;gameMus.pause();S.mode='title';begin.asked=0;titleEl.hidden=false;lvlPick.hidden=false;verEl.hidden=false;padL.classList.add('next');padR.classList.add('next');playTitle()}
 document.getElementById('totitle').addEventListener('click',toTitle);
 var titleHint=document.getElementById('titlehint');titleEl.addEventListener('click',begin);playTitle();
@@ -20,6 +21,7 @@ function step(side){
   if(S.mode==='dream'){dreamTap(side);return}
   if(S.mode==='hosp'){hospTap(side);return}
   if(S.mode==='hall'){hallTap(side);return}
+  if(S.mode==='drive'){driveTap(side);return}
   if(S.mode==='done'||S.mode==='over')return;
   if(S.mode==='cut'){if(C.ph!=='grapple')return;var pe=side==='L'?padL:padR;
     if(S.last===side){pe.classList.add('miss');setTimeout(function(){pe.classList.remove('miss')},120);blip(70,.08,.045);return}

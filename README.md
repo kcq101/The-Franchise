@@ -19,6 +19,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | Loose ball | Alternate to crawl |
 | Hospital bed | Alternate as fast as you can to break the cuffs |
 | Hospital hallway | R jumps, L slides |
+| The chase | Hold L or R to steer |
 
 ## How it is put together
 
@@ -38,6 +39,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-hospital.js` | The hospital scene: waking up, the handcuffs, breaking free, and its drawing |
 | `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
 | `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank makes him move over, takes the wheel and drives off |
+| `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
@@ -55,6 +57,10 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `gown.png` | Hero in his hospital gown: 8 run, tucked jump, hurdle, slide, dive |
 | `land.png` | Hero in his gown for the cutscene: free-fall, bracing, three-point landing (head down, head up), rising |
 | `car3.png` | The getaway car with Moose as a separate layer (`car.png` and `car2.png` are earlier cuts, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
+| `drive_car.png` | Moose's car from behind: straight, left, hard left, hard right, right |
+| `drive_traffic.png` | Traffic from behind: sedan, taxi, hatchback, pickup, box truck, police cruiser |
+| `drive_props.png` | Roadside objects for the chase: cone, barrel, barricade, mailbox, hot dog cart, fruit stand, trash can, news box, lamp, palm, tree, billboard, ramp, fork sign, checkpoint arch |
+| `drive_sky.webp` | Night skyline on the horizon of the chase |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |

@@ -1,5 +1,6 @@
 /* Draws one frame of the alley scenes. */
 function draw(){
+  if(S.mode==='drive'||(S.mode==='over'&&DR.on)){drawDrive();return}
   if(S.mode==='hall'||(S.mode==='over'&&HL.ph)){drawHall();return}
   if(S.mode==='hosp'||(S.mode==='over'&&HS.ph)){drawHosp();return}
   if(S.mode==='dream'||S.mode==='over'){drawDream();return}

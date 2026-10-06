@@ -16,8 +16,8 @@ function getawayUpdate(tt,t){var ph=HL.ph;
   else if(ph==='talk'){if(tt>.15&&hlOnce(1))carSound('frank');if(tt>1.4&&hlOnce(2))carSound('frank');if(tt>2.4&&hlOnce(3))carSound('yell');if(tt>3.5&&hlOnce(4))scuff('L');if(tt>CAR_T.talk)hlphase('enter')}
   else if(ph==='enter'){if(tt>CAR_T.enter)hlphase('shut')}
   else if(ph==='shut'){if(tt>.2&&hlOnce(1)){thump(.35);HL.shake=.35}if(tt>CAR_T.shut){hlphase('away');carSound('go')}}
-  else if(ph==='away'&&tt>CAR_T.away){hlphase('end');S.mode='over';if(HL.dodged+HL.hits)S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
-    endText.textContent='Frank drops four floors and lands on his feet. A red sports car slides up and the door swings open: Moose, his old lineman. "Hurry up, get on in!" Frank has a better idea. "Move over, Moose. I\'m driving."';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
+  else if(ph==='away'&&tt>CAR_T.away){hlphase('end');if(HL.dodged+HL.hits)S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
+    startDrive()}}
 /* where everything is at a given moment: car position, how far the door is open, what Frank is doing, how far the camera has panned */
 function carPose(ph,tt,fx){var X0=fx+34,P=Math.max(0,fx+34+Math.round(97*CARK)-Math.round(W*.6)),o={show:false,x:X0,door:0,rot:0,pan:0,fr:'stand',fxx:fx,fu:0,dy:0,X0:X0,mo:0,seat:false},DX=X0+82*CARK;
   if(ph==='land')return o;
