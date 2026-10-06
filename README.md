@@ -60,7 +60,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `limp.png` | Hero: 6-frame limp |
 | `gown.png` | Hero in his hospital gown: 8 run, tucked jump, hurdle, slide, dive |
 | `land.png` | Hero in his gown for the cutscene: free-fall, bracing, three-point landing (head down, head up), rising |
-| `car3.png` | The getaway car with Moose as a separate layer (`car.png` and `car2.png` are earlier cuts, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
+| `car4.png` | The getaway car with Moose as a separate layer (`car.png`, `car2.png` and `car3.png` are earlier versions, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
 | `drive_car.png` | Moose's car from behind: straight, left, hard left, hard right, right |
 | `drive_traffic.png` | Traffic from behind: sedan, taxi, hatchback, pickup, box truck, police cruiser |
 | `drive_props.png` | Roadside objects for the chase: cone, barrel, barricade, mailbox, hot dog cart, fruit stand, trash can, news box, lamp, palm, tree, billboard, ramp, fork sign, checkpoint arch |
