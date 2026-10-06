@@ -1,5 +1,6 @@
 /* Draws one frame of the alley scenes. */
 function draw(){
+  if(S.mode==='fight'||(S.mode==='over'&&FT.on)){drawFight();return}
   if(S.mode==='stop'||(S.mode==='over'&&ST.on)){drawStop();return}
   if(S.mode==='drive'||(S.mode==='over'&&DR.on)){drawDrive();return}
   if(S.mode==='hall'||(S.mode==='over'&&HL.ph)){drawHall();return}

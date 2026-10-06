@@ -66,10 +66,9 @@ function stopUpdate(dt){var t=S.clock,tt=t-ST.t0,i;ST.shake=Math.max(0,ST.shake-
     if(tt>2.2&&!ST.a1){ST.a1=1;engine();if(audio())try{noise(ac.currentTime,.8,.12,'bandpass',2400,6)}catch(e){}}
     if(tt>2.65&&!ST.snap){ST.snap=t;ST.shake=.6;ST.flash=.4;thump(.25);if(audio())try{noise(ac.currentTime,.3,.25,'highpass',2500,.7)}catch(e){}
       if(typeof DR!=='undefined')DR.dmg=(DR.dmg||0)+2300;ST.bill={t:'+ GAS HOSE  $2,300',t0:t}}
-    if(tt>6.2){stopPhase('end');S.mode='over';var dm=(typeof DR!=='undefined'&&DR.dmg)||2300;
-      S.stat+='<br>LIES TOLD: '+ST.lied+'  CAUGHT OUT: '+ST.caught+'<br>DAMAGES: $'+dm.toLocaleString('en-US')+'  HOAGIES: UNPAID';
-      endText.textContent='Two stories, one kid and one news bulletin later, nobody in the Jawn believes a word. "Frank. This is what you always do." They leave with the hoagies, and with the hose.';
-      stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}}
+    if(tt>6.2){stopPhase('end');S.stat+='<br>LIES TOLD: '+ST.lied+'  CAUGHT OUT: '+ST.caught;
+      /* on to Moose's garage */
+      startFight()}}}
 
 /* ---- drawing ---- */
 function stopWrap(txt,max){var words=txt.split(' '),lines=[''];words.forEach(function(w){var L=lines.length-1;if((lines[L]+' '+w).trim().length>max)lines.push(w);else lines[L]=(lines[L]+' '+w).trim()});return lines}

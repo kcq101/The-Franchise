@@ -21,6 +21,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | Hospital hallway | R jumps, L slides |
 | The chase | Hold L or R to steer |
 | The stop | L or R picks one of two lies; either pad skips a line |
+| The kumite | L throws an excuse, R blocks (swapped in the final round); L, R, L, R holds the splits |
 
 ## How it is put together
 
@@ -42,6 +43,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank runs round to the driver's side and makes him move over, takes the wheel and drives off |
 | `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
 | `js/scene-stop.js` | The stop (level 2-2): the talking level at the Jawn, where every answer is a lie, and the drive-off with the pump |
+| `js/scene-fight.js` | The Driveway Kumite (level 2-3): the argument in Moose's garage as a tournament fighting game, with the splits flashback and the blind final round |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
@@ -71,6 +73,9 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `stop_cast.png` | The people in the Jawn: Frank (idle, talking, caught out), Moose (arms folded, talking), Dot (listening, talking), the kid (looking up, pointing) |
 | `stop_guys.png` | The two regulars eating hoagies at the bin outside the Jawn: both chewing, the first talking, the second talking |
 | `stop_run.png` | Frank and Moose running back to the car with the hoagies, six frames each |
+| `fight_bg.webp` | Moose's garage dressed as the kumite arena |
+| `fight_frank.png`, `fight_moose.png` | The two fighters, twelve poses each |
+| `fight_faces.png` | Close-ups: Frank staring, Moose unimpressed, Frank screaming, Frank with oil in his eyes |
 | `drive_scn.png` | Roadworks and waterfront scenery for the chase: excavator, mixer, crane tower, pipes, arrow board, fence, floodlight, clam shack, lighthouse, boat, containers, dock crane, pier, seafood restaurant |
 | `drive_station.png` | The Rushville police station at the end of the left fork |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
@@ -84,4 +89,4 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `hosp_faces.webp`, `hosp_wide.webp` | Hospital: five close-up face panels, and three wide shots of the bed (cuffed, left free, both free) |
 | `hosp_wide_v1.webp` | The earlier set of wide shots, kept for reference and not used by the game |
 | `title2.webp`, `portrait.png` | Title art and HUD portrait |
-| `title.mp3`, `game.mp3`, `hospital.mp3`, `chase.mp3`, `stop.mp3` | Title music, gameplay music, the hospital voice track, the music for the chase and the music for the stop at the Jawn |
+| `title.mp3`, `game.mp3`, `hospital.mp3`, `chase.mp3`, `stop.mp3`, `kumite.mp3` | Title music, gameplay music, the hospital voice track, the music for the chase, the stop at the Jawn and the kumite |
