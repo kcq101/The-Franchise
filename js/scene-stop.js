@@ -24,7 +24,7 @@ function stopQuestions(){var dmg=(typeof DR!=='undefined'&&DR.dmg)||187400,doc=S
 
 function stopPhase(n){ST.ph=n;ST.t0=S.clock}
 function stopOff(){ST.on=false;ST.ph='';stopStopMusic()}
-function startStop(){if(typeof drvStop==='function')drvStop();S.mode='stop';ST.on=true;ST.qi=0;ST.story='';ST.meter=6;ST.queue=[];ST.line=null;ST.ask=null;ST.pick='';ST.order=1;ST.kid=0;ST.kidIn=false;ST.shake=0;ST.flash=0;ST.news=false;ST.bill=null;ST.snap=0;ST.lied=0;ST.caught=0;
+function startStop(){if(typeof drvStop==='function')drvStop();S.mode='stop';ST.on=true;ST.qi=0;ST.story='';ST.meter=6;ST.queue=[];ST.line=null;ST.ask=null;ST.pick='';ST.order=1;ST.kid=0;ST.kidIn=false;ST.shake=0;ST.flash=0;ST.news=false;ST.bill=null;ST.snap=0;ST.lied=0;ST.caught=0;ST.look=1;
   cv.style.filter='';endBox.hidden=true;tug.hidden=true;hint.hidden=true;padsOn(true);padL.classList.remove('next');padR.classList.remove('next');lvl.innerHTML='THE JAWN<br>LEVEL 2-2';barlab.textContent='STORY';track.style.width='0%';stopMeter();stopPhase('arrive');startStopMusic()}
 function stopMeter(){for(var i=0;i<6;i++)segs[i].className=i<ST.meter?'on':''}
 function stopSay(who,t){ST.queue.push({who:who,t:t})}
@@ -157,25 +157,28 @@ var stopBg=load('stop_inside.webp'),castImg=load('stop_cast.png');
 var CAST=[[0,91,205,37],[93,98,204,37],[193,99,204,37],[294,102,216,53],[398,144,215,86],[544,89,110,44],[635,108,110,62],[745,57,132,30],[804,79,132,28]];
 function stopCast(i,x,fy,flip,sc){if(!ok(castImg))return false;var c=CAST[i];g.save();g.translate(Math.round(x),Math.round(fy));g.scale((flip?-1:1)*sc,sc);g.drawImage(castImg,c[0],0,c[1],c[2],-c[3]/2,-c[2]/2,c[1]/2,c[2]/2);g.restore();return true}
 /* the shop interior is a 432 by 216 picture; everything in it is placed in those units and the whole thing is scaled up on wider screens and slid left on narrow ones */
-function drawStopInside(t){var k=Math.max(1,W/432),ox=W>=432*k?0:-(432*k-W)*.09,oy=H-216*k,F=206,mx=92,fx=242,wx=170,kx=150,i;
+/* the picture is drawn 40 units in from the left, with a mirrored strip of itself filling the gap, so there is room for Moose to stand on the outside of his screen; the scene is 472 wide */
+function drawStopInside(t){var k=Math.max(W/472,Math.min(1,W/380)),ox=Math.max(W-472*k,-8*k),oy=H-216*k,F=206,mx=6,fx=308,wx=178,kx=112,i;
   R(-8,-8,W+16,H+16,'#2a1c14');
-  g.save();g.translate(ox,oy);g.scale(k,k);
-  if(ok(stopBg))g.drawImage(stopBg,0,0,432,216);else{R(0,0,432,216,'#d8c9a4');R(0,144,432,58,'#8a6a44');R(0,202,432,14,'#4a4038')}
+  g.save();g.translate(ox,oy);g.scale(k,k);g.translate(40,0);
+  if(ok(stopBg)){g.drawImage(stopBg,0,0,432,216);g.save();g.scale(-1,1);g.drawImage(stopBg,0,0,123,648,-.5,0,41,216);g.restore()}else{R(0,0,432,216,'#d8c9a4');R(0,144,432,58,'#8a6a44');R(0,202,432,14,'#4a4038')}
   /* the menu board doubles as the order read-out, and later as the news */
   R(106,45,122,34,'rgba(16,18,34,.93)');stopText("FRANK'S HOAGIE",109,48,5,'#ffd27a');var o0=Math.max(0,ST.order-3);for(i=o0;i<ST.order;i++)stopText(STOP_ORDER[i],109,56+(i-o0)*7,5,'#f6f3e8');
   R(230,45,62,34,'rgba(16,18,34,.93)');stopText("MOOSE'S",233,48,5,'#ffd27a');stopText('TURKEY.',233,56,5,'#f6f3e8');stopText('PLAIN.',233,63,5,'#f6f3e8');
   if(ST.news){R(293,45,61,34,((t*3)|0)%2?'#123a7a':'#0f3168');R(306,60,26,8,'#c2281f');R(311,56,12,5,'#c2281f');R(309,67,6,3,'#111');R(324,67,6,3,'#111');R(293,72,61,7,'#c2281f');stopText('LIVE',296,48,5,'#ffffff')}
   /* Dot, behind the pick-up window */
   var L0=ST.line,q0=ST.ask&&!L0?ST.ask:null,says=function(w){return (L0&&L0.who===w)||(q0&&q0.who===w)};
-  g.save();g.beginPath();g.rect(128,90,142,41);g.clip();if(!stopCast(says('W')?6:5,wx,138,true,.85))stopPerson(wx,178,STOP_PAL.W);g.restore();
+  /* she looks at whoever is talking: Moose and the kid are to her left, Frank to her right */
+  if(L0)ST.look=(L0.who==='M'||L0.who==='K')?-1:1;else if(q0)ST.look=q0.who==='K'?-1:1;
+  g.save();g.beginPath();g.rect(128,90,142,41);g.clip();if(!stopCast(says('W')?6:5,wx,138,ST.look>0,.85))stopPerson(wx,178,STOP_PAL.W);g.restore();
   /* the kid, once the door has chimed, walks in from the left */
-  if(ST.kidIn){var kxx=-14+(kx+14)*ST.kid,hop=ST.kid<1?Math.abs(Math.sin(t*12))*2:0;R(kxx-9,F,18,2,'rgba(0,0,0,.3)');if(!stopCast(says('K')&&ST.kid>=1?8:7,kxx,F+2-hop,false,1))stopPerson(kxx,F+1-hop,STOP_PAL.K)}
-  /* Moose at the left screen and Frank at the right one, back to back */
-  R(mx-20,F,40,3,'rgba(0,0,0,.35)');if(!stopCast(says('M')?4:3,mx,F+2,says('M'),1))stopPerson(mx,F+1,STOP_PAL.M);
-  var fturn=(L0&&L0.who==='F')||q0||ST.shake>.1,ff=L0&&L0.who==='F'?1:(ST.shake>.1||(q0&&ST.meter<=3))?2:0;R(fx-20,F+1,40,3,'rgba(0,0,0,.35)');if(!stopCast(ff,fx,F+3,fturn,1)){if(ok(landImg))landAt(4,fx,F+3,0,1.05)}
+  if(ST.kidIn){var kxx=-56+(kx+56)*ST.kid,hop=ST.kid<1?Math.abs(Math.sin(t*12))*2:0;R(kxx-9,F,18,2,'rgba(0,0,0,.3)');if(!stopCast(says('K')&&ST.kid>=1?8:7,kxx,F+2-hop,false,1))stopPerson(kxx,F+1-hop,STOP_PAL.K)}
+  /* Moose at the left screen and Frank at the right one, each on the outside of his screen so they face each other across the shop */
+  R(mx-20,F,40,3,'rgba(0,0,0,.35)');if(!stopCast(L0&&(L0.who==='M'||L0.who==='F')?4:3,mx,F+2,true,1))stopPerson(mx,F+1,STOP_PAL.M);
+  var fturn=true,ff=L0&&L0.who==='F'?1:(ST.shake>.1||(q0&&ST.meter<=3))?2:0;R(fx-20,F+1,40,3,'rgba(0,0,0,.35)');if(!stopCast(ff,fx,F+3,fturn,1)){if(ok(landImg))landAt(4,fx,F+3,0,1.05)}
   g.restore();
-  function P(x,y){return [ox+x*k,oy+y*k]}
-  var pos={F:P(fx,F-106),M:P(mx,F-112),W:P(wx+4,94),K:P(kx+4,F-68)},L=ST.line,q=ST.ask,mc=W<400?17:22;
+  function P(x,y){return [ox+(x+40)*k,oy+y*k]}
+  var pos={F:P(fx-2,F-106),M:P(mx+8,F-112),W:P(wx,94),K:P(kx+4,F-68)},L=ST.line,q=ST.ask,mc=W<400?17:22;
   if(L&&L.who==='TV'){var nn=Math.min(L.t.length,Math.floor((t-L.t0)*38)),tx=W>=400?62:8,tl=stopWrap(L.t.slice(0,Math.max(1,nn)),Math.floor((W-tx*2)/7));R(0,H-45,W,45,OUT);R(0,H-44,W,44,'#123a7a');R(0,H-44,W,11,'#c2281f');stopText('JAWN TV   BREAKING NEWS',tx,H-41,6,'#ffffff');tl.forEach(function(l,n2){stopText(l,tx,H-29+n2*9,7,'#ffffff')})}
   else if(L){var n=Math.min(L.t.length,Math.floor((t-L.t0)*38)),p=pos[L.who];stopBubble(p[0],p[1],L.t.slice(0,Math.max(1,n)),L.who==='F'?'#c2281f':'#1a1a26',mc)}
   else if(q){var pq=pos[q.who];stopBubble(pq[0],pq[1],q.t,'#1a1a26',mc)}
