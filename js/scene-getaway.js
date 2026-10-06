@@ -1,5 +1,5 @@
 /* The getaway: after the landing a red sports car slides up, the door swings open, the driver yells, Frank runs over and climbs in, the door shuts and the car takes off. A cutscene; it plays inside the landing shot from the hallway file. */
-var carImg=load('car.png'),CW=373,CH=108;   /* three rows: door shut, cabin with the door off, the door on its own */
+var carImg=load('car.png'),CARW=373,CARH=108;   /* three rows: door shut, cabin with the door off, the door on its own */
 var CAR_T={car:1.5,door:1.9,board:1.3,shut:.55,away:2.1};   /* how long each beat lasts */
 var CAR_BASE=18;   /* wheels sit this far below the curb line */
 function carSound(k){if(!audio())return;try{var t=ac.currentTime,i;
@@ -26,14 +26,14 @@ function carPose(ph,tt,fx){var X0=fx+34,P=Math.max(0,fx+131-Math.round(W*.6)),o=
   else if(ph==='away'){o.fr='gone';var k=Math.max(0,tt-.3);o.x=X0+950*k*k;o.rot=-.035*Math.min(1,tt/.3)}
   else{o.fr='gone';o.x=X0+9999}
   return o}
-function drawGetaway(o,ph,tt,G,fx,t){var by=G+CAR_BASE,w=CW/2,h=CH/2,i;
+function drawGetaway(o,ph,tt,G,fx,t){var by=G+CAR_BASE,w=CARW/2,h=CARH/2,i;
   if(!ok(carImg))return;
   /* tyre smoke: a little under braking, a lot on the way out */
   if(ph==='car'&&tt>.6)for(i=0;i<5;i++){var b=tt-.6-i*.05;if(b>0&&b<.8){g.fillStyle='rgba(215,218,230,'+(.35*(1-b/.8)).toFixed(2)+')';g.beginPath();g.arc(o.x+35+(i%2)*106-b*20,by-3-b*10,3+b*10,0,TAU);g.fill()}}
   if(ph==='away')for(i=0;i<12;i++){var c=tt-.25-i*.045;if(c>0&&c<1.3){g.fillStyle='rgba(215,218,230,'+(.5*(1-c/1.3)).toFixed(2)+')';g.beginPath();g.arc(o.X0+30-c*46+i*7,by-4-c*16-(i%3)*3,5+c*17,0,TAU);g.fill()}}
   g.save();g.translate(Math.round(o.x+w/2),by+o.dy);g.rotate(o.rot);g.translate(-w/2,-h);
   R(6,h-2,w-12,4,'rgba(0,0,0,.45)');
-  g.drawImage(carImg,0,o.door>0?CH:0,CW,CH,0,0,w,h);
+  g.drawImage(carImg,0,o.door>0?CARH:0,CARW,CARH,0,0,w,h);
   /* Frank: running to the door, then ducking in through it */
   if(o.fr==='run'||o.fr==='in'){var lx=o.fxx-o.x,sc=1.3,al=1,yy=h-CAR_BASE+14-45;
     g.save();
@@ -41,7 +41,7 @@ function drawGetaway(o,ph,tt,G,fx,t){var by=G+CAR_BASE,w=CW/2,h=CH/2,i;
     g.globalAlpha=al;gownAt(o.fr==='in'?9:((tt*15)|0)%8,lx,yy,o.fr==='in'?.12:0,sc);g.restore()}
   /* the door swings toward the camera on its front hinge, so it narrows as it opens */
   if(o.door>0){var cw=Math.cos(o.door*1.08),dw=47*cw,dx=121-dw;
-    g.drawImage(carImg,148,2*CH+6,94,84,dx,3,dw,42);
+    g.drawImage(carImg,148,2*CARH+6,94,84,dx,3,dw,42);
     R(dx,3+42*.44,dw,42*.56,'rgba(0,0,0,'+(.3*o.door).toFixed(2)+')');R(dx-2,4,2,39,'#2a0709');R(dx,4,1,39,'#ff6a5e')}
   g.restore();
   if(ph==='door'&&tt>.4||ph==='board'&&tt<.45){var first=ph==='door'&&tt<1.15;bubble(o.x+92,by-h-24,first?'HURRY UP!':'GET ON IN!',true)}}
