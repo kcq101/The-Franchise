@@ -70,6 +70,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `stop_inside.webp` | Inside the Jawn: the counter, the pick-up window and the two ordering screens |
 | `stop_cast.png` | The people in the Jawn: Frank (idle, talking, caught out), Moose (arms folded, talking), Dot (listening, talking), the kid (looking up, pointing) |
 | `stop_guys.png` | The two regulars eating hoagies at the bin outside the Jawn: both chewing, the first talking, the second talking |
+| `stop_run.png` | Frank and Moose running back to the car with the hoagies, six frames each |
 | `drive_scn.png` | Roadworks and waterfront scenery for the chase: excavator, mixer, crane tower, pipes, arrow board, fence, floodlight, clam shack, lighthouse, boat, containers, dock crane, pier, seafood restaurant |
 | `drive_station.png` | The Rushville police station at the end of the left fork |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
