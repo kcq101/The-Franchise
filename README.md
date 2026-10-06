@@ -37,7 +37,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-dream.js` | The football level: run, collision, loose ball, touchdown, and its drawing |
 | `js/scene-hospital.js` | The hospital scene: waking up, the handcuffs, breaking free, and its drawing |
 | `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
-| `js/scene-getaway.js` | The getaway cutscene after the landing: the car pulls up, the door opens, the driver yells, Frank climbs in and they drive off |
+| `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank makes him move over, takes the wheel and drives off |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
@@ -54,7 +54,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `limp.png` | Hero: 6-frame limp |
 | `gown.png` | Hero in his hospital gown: 8 run, tucked jump, hurdle, slide, dive |
 | `land.png` | Hero in his gown for the cutscene: free-fall, bracing, three-point landing (head down, head up), rising |
-| `car2.png` | The getaway car (`car.png` is the earlier, smaller cut, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
+| `car3.png` | The getaway car with Moose as a separate layer (`car.png` and `car2.png` are earlier cuts, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |
