@@ -67,13 +67,13 @@ function drvBuild(){var segs=[],i,r=rng(777);
   for(i=0;i<4;i++)cars.push({z:(DFORK1+16+i*12)*DSEG,x:-1.9+(i%2)*.6,v:0,k:5,hit:0,vx:0,cop:true,still:true,deco:true});
   DR.cars=cars}
 
-function drvStop(){DR.on=false;DR.ph='';if(DR.eng){try{DR.eng.g.gain.setTargetAtTime(0,ac.currentTime,.05);var e=DR.eng;setTimeout(function(){try{e.o.stop();e.o2.stop();e.n.stop()}catch(x){}},400)}catch(x){}DR.eng=null}}
+function drvStop(){DR.on=false;DR.ph='';stopChaseMusic();if(DR.eng){try{DR.eng.g.gain.setTargetAtTime(0,ac.currentTime,.05);var e=DR.eng;setTimeout(function(){try{e.o.stop();e.o2.stop();e.n.stop()}catch(x){}},400)}catch(x){}DR.eng=null}}
 function drvEngine(){if(DR.eng||!audio())return;try{var o=ac.createOscillator(),o2=ac.createOscillator(),f=ac.createBiquadFilter(),gn=ac.createGain(),n=ac.createBufferSource(),nf=ac.createBiquadFilter(),ng=ac.createGain();
   o.type='sawtooth';o2.type='square';f.type='lowpass';f.frequency.value=500;gn.gain.value=0;o.connect(f);o2.connect(f);f.connect(gn);gn.connect(sfxG);
   n.buffer=noiseBuf;n.loop=true;nf.type='lowpass';nf.frequency.value=600;ng.gain.value=.35;n.connect(nf);nf.connect(ng);ng.connect(gn);o.start();o2.start();n.start();DR.eng={o:o,o2:o2,f:f,g:gn,n:n}}catch(e){}}
 function startDrive(){drvStop();drvBuild();S.mode='drive';DR.on=true;DR.ph='intro';DR.t=0;DR.z=0;DR.x=.0;DR.v=0;DR.steer=0;DR.heat=0;DR.dmg=0;DR.busts=0;DR.cp=0;DR.parts=[];DR.say=null;DR.fsay=null;DR.jump=0;DR.shake=0;DR.flash=0;DR.skyX=0;DR.copT=6;DR.copN=0;DR.mi=0;DR.near=0;DR.notyet=false;DR.triedLeft=false;DR.lastSeg=0;DR.forkSaid=false;DR.blockSaid=false;DR.bill=null;DR.burst=null;DR.carTop=0;
   cv.style.filter='';endBox.hidden=true;tug.hidden=true;padsOn(true);padL.classList.remove('next');padR.classList.remove('next');hint.textContent='HOLD L OR R TO STEER';hint.hidden=false;
-  lvl.innerHTML='RUSHVILLE<br>LEVEL 2-1';barlab.textContent='HEAT';track.style.width='0%';drvEngine()}
+  lvl.innerHTML='RUSHVILLE<br>LEVEL 2-1';barlab.textContent='HEAT';track.style.width='0%';drvEngine();startChaseMusic()}
 function driveTap(){if(DR.ph==='go')hint.hidden=true}
 function drvMoose(txt){DR.say={t:txt,t0:S.clock}}
 function drvFrank(txt,d){DR.fsay={t:txt,t0:S.clock,d:d||1.6}}
@@ -144,7 +144,7 @@ function driveUpdate(dt){var d=DR,i,c,sp,t=S.clock;d.t+=dt;d.shake=Math.max(0,d.
     if(!c.passed&&dz<-300){c.passed=true;if(!c.hit&&!c.still&&!c.cop&&Math.abs(c.x-px)<hw+.22&&sp>.7){S.score+=100;d.near=t}}}
   scoreEl.textContent=pad6(S.score);track.style.width=Math.min(100,pz/(DEND*DSEG)*100).toFixed(1)+'%';
   var on=Math.ceil(d.heat*6-.001);for(i=0;i<6;i++)segs[i].className=i<on?'on':'';
-  if(d.eng)try{var sp2=d.v/DMAXV,gear=(sp2*4)%1,now=ac.currentTime,f0=58+sp2*70+gear*46+(d.jump>0?40:0);d.eng.o.frequency.setTargetAtTime(f0,now,.04);d.eng.o2.frequency.setTargetAtTime(f0*1.5,now,.04);d.eng.f.frequency.setTargetAtTime(380+sp2*900,now,.08);d.eng.g.gain.setTargetAtTime(S.mode==='drive'?.05+sp2*.035:0,now,.1)}catch(e){}}
+  if(d.eng)try{var sp2=d.v/DMAXV,gear=(sp2*4)%1,now=ac.currentTime,f0=58+sp2*70+gear*46+(d.jump>0?40:0);d.eng.o.frequency.setTargetAtTime(f0,now,.04);d.eng.o2.frequency.setTargetAtTime(f0*1.5,now,.04);d.eng.f.frequency.setTargetAtTime(380+sp2*900,now,.08);d.eng.g.gain.setTargetAtTime(S.mode==='drive'?.03+sp2*.022:0,now,.1)}catch(e){}}
 
 /* one line of text with a dark outline, in the game's pixel font */
 function drvText(txt,x,y,size,col,align){g.font=size+'px "Press Start 2P", monospace';g.textAlign=align||'center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=3;g.strokeStyle='#0b0c18';g.strokeText(txt,x,y);g.fillStyle=col;g.fillText(txt,x,y)}

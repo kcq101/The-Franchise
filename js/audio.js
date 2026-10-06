@@ -56,6 +56,11 @@ function playTitle(){if(!TITLE_TRACK){titleOn=true;return}if(muted)return;var p=
 var hospWanted=false;
 function primeHospMusic(){if(hospWanted)return;try{hospMus.muted=true;var p=hospMus.play();if(p&&p.then)p.then(function(){hospMus.muted=false;if(hospWanted)return;/* the hospital scene already started: leave it playing */hospMus.pause();hospMus.currentTime=0},function(){hospMus.muted=false})}catch(e){}}
 function startHospMusic(){hospWanted=true;try{hospMus.muted=false;hospMus.currentTime=0;if(!muted){var p=hospMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
+/* the chase has its own track; it takes over from the game track while the driving level is on */
+var chaseMus=new Audio('assets/audio/chase.mp3'),CVOL=.5,chaseWanted=false;chaseMus.loop=true;chaseMus.preload='auto';chaseMus.volume=CVOL;
+function primeChaseMusic(){if(chaseWanted)return;try{chaseMus.muted=true;var p=chaseMus.play();if(p&&p.then)p.then(function(){chaseMus.muted=false;if(chaseWanted)return;chaseMus.pause();chaseMus.currentTime=0},function(){chaseMus.muted=false})}catch(e){}}
+function startChaseMusic(){chaseWanted=true;try{gameMus.pause();chaseMus.muted=false;chaseMus.currentTime=0;if(!muted){var p=chaseMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
+function stopChaseMusic(){if(!chaseWanted)return;chaseWanted=false;try{chaseMus.pause();if(!muted&&S.mode!=='title'){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function startGameMusic(){try{titleMus.pause();gameMus.currentTime=0;if(!muted){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function mstate(){return null;var m=S.mode,p=C.ph;
   if(m==='ready')return{bpm:112,bass:1,hat:1,prog:[0,0,-4,-2]};
