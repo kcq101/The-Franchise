@@ -82,4 +82,4 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `hosp_faces.webp`, `hosp_wide.webp` | Hospital: five close-up face panels, and three wide shots of the bed (cuffed, left free, both free) |
 | `hosp_wide_v1.webp` | The earlier set of wide shots, kept for reference and not used by the game |
 | `title2.webp`, `portrait.png` | Title art and HUD portrait |
-| `title.mp3`, `game.mp3`, `hospital.mp3`, `chase.mp3` | Title music, gameplay music, the hospital voice track and the music for the chase |
+| `title.mp3`, `game.mp3`, `hospital.mp3`, `chase.mp3`, `stop.mp3` | Title music, gameplay music, the hospital voice track, the music for the chase and the music for the stop at the Jawn |

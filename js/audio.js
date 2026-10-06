@@ -61,6 +61,11 @@ var chaseMus=new Audio('assets/audio/chase.mp3'),CVOL=.5,chaseWanted=false;chase
 function primeChaseMusic(){if(chaseWanted)return;try{chaseMus.muted=true;var p=chaseMus.play();if(p&&p.then)p.then(function(){chaseMus.muted=false;if(chaseWanted)return;chaseMus.pause();chaseMus.currentTime=0},function(){chaseMus.muted=false})}catch(e){}}
 function startChaseMusic(){chaseWanted=true;try{gameMus.pause();chaseMus.muted=false;chaseMus.currentTime=0;if(!muted){var p=chaseMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function stopChaseMusic(){if(!chaseWanted)return;chaseWanted=false;try{chaseMus.pause();if(!muted&&S.mode!=='title'){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
+/* the stop at the Jawn has its own track too */
+var stopMus=new Audio('assets/audio/stop.mp3'),stopWanted=false;stopMus.loop=true;stopMus.preload='auto';stopMus.volume=.5;
+function primeStopMusic(){if(stopWanted)return;try{stopMus.muted=true;var p=stopMus.play();if(p&&p.then)p.then(function(){stopMus.muted=false;if(stopWanted)return;stopMus.pause();stopMus.currentTime=0},function(){stopMus.muted=false})}catch(e){}}
+function startStopMusic(){stopWanted=true;try{gameMus.pause();stopMus.muted=false;stopMus.currentTime=0;if(!muted){var p=stopMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
+function stopStopMusic(){if(!stopWanted)return;stopWanted=false;try{stopMus.pause();if(!muted&&S.mode!=='title'){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function startGameMusic(){try{titleMus.pause();gameMus.currentTime=0;if(!muted){var p=gameMus.play();if(p&&p.catch)p.catch(function(){})}}catch(e){}}
 function mstate(){return null;var m=S.mode,p=C.ph;
   if(m==='ready')return{bpm:112,bass:1,hat:1,prog:[0,0,-4,-2]};
