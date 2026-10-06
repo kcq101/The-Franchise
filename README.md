@@ -54,7 +54,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `limp.png` | Hero: 6-frame limp |
 | `gown.png` | Hero in his hospital gown: 8 run, tucked jump, hurdle, slide, dive |
 | `land.png` | Hero in his gown for the cutscene: free-fall, bracing, three-point landing (head down, head up), rising |
-| `car.png` | The getaway car in three rows: door shut, cabin with the door off, the door on its own |
+| `car2.png` | The getaway car (`car.png` is the earlier, smaller cut, kept but unused) in three rows: door shut, cabin with the door off, the door on its own |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |

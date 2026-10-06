@@ -1,5 +1,5 @@
 /* The getaway: after the landing a red sports car slides up, the door swings open, the driver yells, Frank runs over and climbs in, the door shuts and the car takes off. A cutscene; it plays inside the landing shot from the hallway file. */
-var carImg=load('car.png'),CARW=485,CARH=141,CARK=1.3;   /* three rows: door shut, cabin with the door off, the door on its own */
+var carImg=load('car2.png'),CARW=485,CARH=141,CARK=1.3;   /* three rows: door shut, cabin with the door off, the door on its own */
 var CAR_T={car:1.5,door:1.9,board:1.3,shut:.55,away:2.1};   /* how long each beat lasts */
 var CAR_BASE=18;   /* wheels sit this far below the curb line */
 function carSound(k){if(!audio())return;try{var t=ac.currentTime,i;
