@@ -102,9 +102,9 @@ function stopGuys(bx,by,t,talk){var i;
     R(x-3,y-7,6,8,OUT);R(x-2.5,y-6.5,5,7,i?'#c9a227':'#2f7d4f');R(x-2,y-11,4,4,OUT);R(x-1.5,y-10.5,3,3,i?'#8d5a3b':'#e0aa82');R(x-2,y-12,4,2,i?'#1a1a26':'#b4231c');
     var chew=((t*3+i)|0)%2;R(x+(i?-5:2),y-5-(talk===i?0:chew),3,2,'#e8c98a');R(x+(i?-5:2),y-4-(talk===i?0:chew),3,1,'#c2281f')}}
 function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=MW*243/947,G=174,sc=.8,cw=CARW/2.6*sc,cx=x0+288,px=x0+329,py=G-22,carX=cx,rot=0,i;
-  var door=[x0+111,G-6],bin=[x0+140,G-6],seat=[cx+cw*.5,G+12],SD=.27,SN=.6;
+  var door=[x0+113,G+1],bin=[x0+52,G+1],seat=[cx+cw*.5,G+12],SD=.27,SN=.6;
   /* the camera pushes in on the doors while the regulars talk, and starts there on the way out */
-  var zu=leaving?Math.max(0,1-tt/.9):Math.max(0,Math.min(1,(tt-5.9)/1.3));zu=zu*zu*(3-2*zu);var Z=1+1.5*zu,fcx=W/2+(door[0]+14-W/2)*zu,fcy=H*.55+(door[1]-16-H*.55)*zu;
+  var zu=leaving?Math.max(0,1-tt/.9):Math.max(0,Math.min(1,(tt-5.9)/1.3));zu=zu*zu*(3-2*zu);var Z=1+1.5*zu,fcx=W/2+(door[0]-22-W/2)*zu,fcy=H*.55+(door[1]-22-H*.55)*zu;
   function T(x,y){return [W/2+(x-fcx)*Z,H*.55+(y-fcy)*Z]}
   R(-8,-8,W+16,H+16,'#0a1030');
   g.save();g.translate(W/2,H*.55);g.scale(Z,Z);g.translate(-fcx,-fcy);
@@ -130,7 +130,7 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
   if(walk>=0&&walk<.98){var w2=walk*walk*(3-2*walk),s2=SD+(SN-SD)*w2,bob=Math.abs(Math.sin(tt*(leaving?14:9)))*3*s2,stand=!leaving&&walk<=0;if(stand)bob=0;
     var fxw=door[0]-2+(seat[0]-door[0])*w2,fyw=door[1]+(seat[1]-door[1])*w2,mxw=fxw+(leaving?-26:24)*s2*(leaving?Math.min(1,walk*4):1);
     stopCast(leaving?4:3,mxw,fyw-bob,leaving,s2);
-    if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6);else stopCast(tt>11&&tt<12.2?1:0,fxw,fyw-(stand?0:Math.abs(Math.sin(tt*9+1))*3*s2),!stand||tt<11||tt>12.2,s2);
+    if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6);else stopCast(tt>11&&tt<12.2?1:0,fxw,fyw-(stand?0:Math.abs(Math.sin(tt*9+1))*3*s2),true,s2);
     fp=[fxw,fyw-102*s2]}
   if(!leaving)stopCar(carX,G+12,sc,rot,inCar);
   if(leaving&&tt>2.2&&tt<3.6)for(i=0;i<8;i++){var c=tt-2.2-i*.05;if(c>0&&c<1){g.fillStyle='rgba(215,218,230,'+(.45*(1-c)).toFixed(2)+')';g.beginPath();g.arc(cx+20-c*40+i*6,G+8-c*14,4+c*14,0,TAU);g.fill()}}
