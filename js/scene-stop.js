@@ -95,10 +95,23 @@ function stopCar(x,by,sc,rot,full){if(!ok(carImg))return;var w=CARW/2.6,h=CARH/2
   R(6,h-2,w-12,4,'rgba(0,0,0,.45)');g.drawImage(carImg,0,0,CARW,CARH,0,0,w,h);
   if(full){g.beginPath();g.rect(74.5,4.2,32,15.4);g.clip();gownAt(0,SEATX,SEATY,0,SEATS);g.translate(82,21);g.scale(1.2,1.2);g.translate(-88,-19.4);g.drawImage(carImg,0,3*CARH,252,CARH,0,0,252/2.6,h)}
   g.restore()}
-/* what gets said at the doors on the way in: start, end, who (a and b are the regulars, f is Frank) and the line */
-var STOP_CHAT=[[5.9,7.6,'a','YOU SEE THE ROCKETS GAME?'],[7.7,9.8,'b','I saw the first half. Then I saw my ceiling.'],[9.9,11.9,'a',"NEW QUARTERBACK'S THE REAL DEAL THOUGH."],[12,13.5,'b','You say that every year.'],
-  [13.6,15.6,'a',"AIN'T BEEN RIGHT SINCE THAT FUMBLE."],[15.7,17.1,'b','Twenty years, man.'],[17.2,18.3,'f','...'],[18.4,19.6,'a','YO. GOWN GUY.'],[19.7,22.1,'a','DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT.'],[22.2,23.4,'f',"I DON'T NEED A STORY."],[23.5,24.7,'b','He needs a story.']];
-var STOP_IN=25.2;   /* seconds of arrival before the scene cuts inside */
+/* what gets said at the doors on the way in: start, end, who (a and b are the regulars, f is Frank, m is Moose) and the line */
+var STOP_CHAT=[[5.9,7.5,'a',"YOU SEE THE BIRDS GAME?"],
+  [7.6,10.6,'b',"First half. Then I watched my ceiling. Ceiling had a better second half."],
+  [10.7,12.7,'a',"NEW SIGNING'S THE REAL DEAL THOUGH."],
+  [12.8,14.7,'b',"You said that about the last six."],
+  [14.8,16.9,'a',"COULD BE WORSE. COULD BE ROCKETS FANS."],
+  [17.0,19.0,'b',"Rockets. Cursed since that fumble."],
+  [19.1,21.4,'a',"GUY RAN INTO HIS OWN LINEMAN. HIS OWN LINEMAN."],
+  [21.5,23.3,'m',"...It wasn't that hard a hit."],
+  [23.4,25.3,'a',"WONDER WHAT HAPPENED TO THAT GUY."],
+  [25.4,27.0,'b',"Probably doing great."],
+  [27.1,28.3,'f',"..."],
+  [28.4,29.8,'a',"YO. GOWN GUY."],
+  [29.9,32.4,'a',"DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT."],
+  [32.5,34.1,'f',"I DON'T NEED A STORY."],
+  [34.2,35.7,'b',"He needs a story."]];
+var STOP_IN=36.2;   /* seconds of arrival before the scene cuts inside */
 function stopChat(tt){for(var i=0;i<STOP_CHAT.length;i++)if(tt>=STOP_CHAT[i][0]&&tt<STOP_CHAT[i][1])return STOP_CHAT[i];return null}
 /* the two regulars eating at the double bin by the doors (the blocks below are only a fallback for when the picture has not loaded) */
 var guysImg=load('stop_guys.png'),GUYS=[[0,158,75],[160,158,75],[320,180,75]];   /* both chewing, the first one talking, the second one talking: x, width, and where the middle of the bin is */
@@ -133,22 +146,22 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
     g.beginPath();g.moveTo(px,py);g.quadraticCurveTo(px+3+Math.sin(t*9)*4*Math.max(0,1-q/2),py+8,px+2+Math.sin(t*9)*7*Math.max(0,1-q/2),py+15);g.stroke();
     if(q<.5)for(i=0;i<10;i++){var a=i*1.9,r=q*70*(.4+(i%5)*.15);R(px+Math.cos(a)*r,py+4+Math.sin(a)*r*.6+q*q*80,2,2,i%2?'#ffd23a':'#ffffff')}}
   /* Frank and Moose on foot: small at the doors, bigger as they come toward the camera and the car */
-  var walk=-1,fp=null;
+  var walk=-1,fp=null,mp=null;
   if(!leaving&&tt>5.5)walk=1-Math.min(1,(tt-5.5)/1.7);else if(leaving&&tt<1.6)walk=Math.min(1,tt/1.5);
   var inCar=leaving?tt>1.5:tt<=5.5;
   if(leaving)stopCar(carX,G+12,sc,rot,inCar);
   if(walk>=0&&walk<.98){var w2=walk*walk*(3-2*walk),s2=SD+(SN-SD)*w2,bob=Math.abs(Math.sin(tt*(leaving?14:9)))*3*s2,stand=!leaving&&walk<=0;if(stand)bob=0;
     var fxw=door[0]-2+(seat[0]-door[0])*w2,fyw=door[1]+(seat[1]-door[1])*w2,mxw=fxw+(leaving?-52:24)*s2*(leaving?Math.min(1,walk*4):1);
     if(leaving&&ok(runImg)){var rf=((tt*13)|0)%6;stopRun(1,(rf+3)%6,mxw,fyw+2*s2,s2);stopRun(0,rf,fxw,fyw+2*s2,s2)}
-    else{stopCast(leaving?4:3,mxw,fyw-bob,leaving,s2);if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6)}
+    else{stopCast(leaving||(chat&&chat[2]==='m')?4:3,mxw,fyw-bob,true,s2);if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6)}
     if(!leaving)stopCast(chat&&chat[2]==='f'?(chat[3]==='...'?2:1):0,fxw,fyw-(stand?0:Math.abs(Math.sin(tt*9+1))*3*s2),true,s2);
-    fp=[fxw,fyw-102*s2]}
+    fp=[fxw,fyw-102*s2];mp=[mxw,fyw-108*s2]}
   if(!leaving)stopCar(carX,G+12,sc,rot,inCar);
   if(leaving&&tt>2.2&&tt<3.6)for(i=0;i<8;i++){var c=tt-2.2-i*.05;if(c>0&&c<1){g.fillStyle='rgba(215,218,230,'+(.45*(1-c)).toFixed(2)+')';g.beginPath();g.arc(cx+20-c*40+i*6,G+8-c*14,4+c*14,0,TAU);g.fill()}}
   g.restore();
   var cb=T(carX+cw*.5,G+12-CARH/2.6*sc-4),bx=cb[0],by=cb[1],ga=T(bin[0]-1,bin[1]-30),gb=T(bin[0]+19,bin[1]-30);
   if(!leaving){if(tt>2.1&&tt<3.2)stopBubble(bx,by,'WE NEED GAS.');else if(tt>3.3&&tt<4.3)stopBubble(bx,by,'I NEED A HOAGIE.','#c2281f');else if(tt>4.4&&tt<5.5)stopBubble(bx,by,'YOU NEED PANTS.');
-    else if(chat){var cp=chat[2]==='a'?ga:chat[2]==='b'?gb:fp?T(fp[0],fp[1]):null;if(cp)stopBubble(cp[0],cp[1],chat[3],chat[2]==='f'?'#c2281f':null,W<400?18:24)}}
+    else if(chat){var cp=chat[2]==='a'?ga:chat[2]==='b'?gb:chat[2]==='m'?(mp?T(mp[0],mp[1]):null):fp?T(fp[0],fp[1]):null;if(cp)stopBubble(cp[0],cp[1],chat[3],chat[2]==='f'?'#c2281f':null,W<400?18:24)}}
   else{if(tt>.25&&tt<1.5)stopBubble(ga[0],ga[1],'TOLD YOU, BRO.');else if(tt>1.6&&tt<2.5)stopBubble(bx,by,'THE HOSE, FRANK.');else if(tt>2.5&&tt<3.2)stopBubble(Math.min(W-40,bx),by,'NO TIME.','#c2281f');else if(ST.snap&&t-ST.snap>.9&&t-ST.snap<2.6)stopBubble(W-70,G-60,'...That was the hose.')}
   if(ST.snap&&t-ST.snap<1.1)burst('SNAP!',px,py-34,14,'#ffd27a',ST.snap);
   if(ST.bill&&t-ST.bill.t0<2.6){g.textAlign='center';stopText(ST.bill.t,W/2,30,8,'#ff6a5e','center');stopText('+ 2 HOAGIES  UNPAID',W/2,44,6,'#ffd27a','center')}}
