@@ -61,6 +61,9 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `drive_traffic.png` | Traffic from behind: sedan, taxi, hatchback, pickup, box truck, police cruiser |
 | `drive_props.png` | Roadside objects for the chase: cone, barrel, barricade, mailbox, hot dog cart, fruit stand, trash can, news box, lamp, palm, tree, billboard, ramp, fork sign, checkpoint arch |
 | `drive_sky.webp` | Night skyline on the horizon of the chase |
+| `drive_bld.png` | Downtown building fronts for the chase: apartment, diner, office, pawn shop, theater, parking garage |
+| `drive_scn.png` | Roadworks and waterfront scenery for the chase: excavator, mixer, crane tower, pipes, arrow board, fence, floodlight, clam shack, lighthouse, boat, containers, dock crane, pier, seafood restaurant |
+| `drive_station.png` | The Rushville police station at the end of the left fork |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |
