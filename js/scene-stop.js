@@ -107,11 +107,12 @@ var STOP_CHAT=[[5.9,7.5,'a',"YOU SEE THE BIRDS GAME?"],
   [23.4,25.3,'a',"WONDER WHAT HAPPENED TO THAT GUY."],
   [25.4,27.0,'b',"Probably doing great."],
   [27.1,28.3,'f',"..."],
-  [28.4,29.8,'a',"YO. GOWN GUY."],
-  [29.9,32.4,'a',"DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT."],
-  [32.5,34.1,'f',"I DON'T NEED A STORY."],
-  [34.2,35.7,'b',"He needs a story."]];
-var STOP_IN=36.2;   /* seconds of arrival before the scene cuts inside */
+  [28.4,30.4,'a',"YO, GOWN GUY. DOT'S WORKING TONIGHT."],
+  [30.5,32.5,'a',"HOAGIE GIRL PICKS UP ON EVERYTHING."],
+  [32.6,35.3,'a',"CHANGE YOUR STORY ONCE AND DELI GIRL'S GOT YOU FIGURED OUT."],
+  [35.4,37.0,'f',"I DON'T NEED A STORY."],
+  [37.1,38.6,'b',"He needs a story."]];
+var STOP_IN=39.1;   /* seconds of arrival before the scene cuts inside */
 function stopChat(tt){for(var i=0;i<STOP_CHAT.length;i++)if(tt>=STOP_CHAT[i][0]&&tt<STOP_CHAT[i][1])return STOP_CHAT[i];return null}
 /* the two regulars eating at the double bin by the doors (the blocks below are only a fallback for when the picture has not loaded) */
 var guysImg=load('stop_guys.png'),GUYS=[[0,158,75],[160,158,75],[320,180,75]];   /* both chewing, the first one talking, the second one talking: x, width, and where the middle of the bin is */
