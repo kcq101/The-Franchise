@@ -1,7 +1,7 @@
 /* The stop (level 2-2): Frank and Moose pull into the Jawn for gas and hoagies. A talking level in the style of an old adventure game.
    The woman behind the counter and a kid who wanders in ask Frank questions; L and R are both lies. Lies that agree with the story so far cost nothing;
    a lie that contradicts it cracks the STORY meter, and the later questions crack it whatever he says. When it is empty Moose says his line and they run for it,
-   driving off with the pump nozzle still in the tank. The people and the shop interior are drawn in code as stand-ins until there is art for them. */
+   driving off with the pump nozzle still in the tank. The plain block people are only a fallback for when the cast sheet has not loaded. */
 var ST={on:false,ph:'',t0:0,qi:0,story:'',meter:6,queue:[],line:null,ask:null,pick:'',pickT:0,order:1,kid:0,kidIn:false,shake:0,flash:0,news:false,bill:null,snap:0,lied:0,caught:0};
 var STOP_ORDER=['ITALIAN','+ EXTRA EVERYTHING','+ MEATBALLS','+ 2ND HOAGIE INSIDE','+ MAKE IT FOUR FEET','+ CALL IT THE FRANCHISE','+ CHIPS'];
 var STOP_NAME={F:'FRANK',M:'MOOSE',W:'DOT',K:'KID',TV:'NEWS'},STOP_PITCH={F:300,M:150,W:430,K:640,TV:220};
@@ -107,7 +107,7 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
     if(q<1)for(i=0;i<6;i++){g.fillStyle='rgba(200,205,220,'+(.4*(1-q)).toFixed(2)+')';g.beginPath();g.arc(px+6+(i-3)*7,G-8-q*30-(i%3)*5,5+q*12,0,TAU);g.fill()}}
   /* running out to the car */
   if(leaving&&tt<1.6){var ur=Math.min(1,tt/1.5),dx0=x0+238,fxr=dx0+(cx+cw*.5-dx0)*ur,mxr=dx0+(cx+cw*.62-dx0)*Math.max(0,ur-.12)/.88;
-    if(ur<.97){stopPerson(mxr,G+10-Math.abs(Math.sin(tt*14))*3,{h:76,w:26,top:'#2b3350',leg:'#23263a',skin:'#c98f62'});gownAt(((tt*15)|0)%8,fxr,G+12-37,0,1.08)}}
+    if(ur<.97){var mby=G+11-Math.abs(Math.sin(tt*14))*3;if(!stopCast(4,mxr,mby,true,.8))stopPerson(mxr,mby,{h:76,w:26,top:'#2b3350',leg:'#23263a',skin:'#c98f62'});gownAt(((tt*15)|0)%8,fxr,G+12-37,0,1.08)}}
   stopCar(carX,G+12,sc,rot,!leaving||tt>1.5);
   if(leaving&&tt>2.2&&tt<3.6)for(i=0;i<8;i++){var c=tt-2.2-i*.05;if(c>0&&c<1){g.fillStyle='rgba(215,218,230,'+(.45*(1-c)).toFixed(2)+')';g.beginPath();g.arc(cx+20-c*40+i*6,G+8-c*14,4+c*14,0,TAU);g.fill()}}
   var bx=carX+cw*.5,by=G+12-CARH/2.6*sc-4;
@@ -115,9 +115,12 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
   else{if(tt>1.6&&tt<2.5)stopBubble(bx,by,'THE PUMP, FRANK.');else if(tt>2.5&&tt<3.2)stopBubble(Math.min(W-40,bx),by,'NO TIME.','#c2281f');else if(ST.snap&&t-ST.snap>.9&&t-ST.snap<2.6)stopBubble(W-70,G-60,'...That was the pump.')}
   if(ST.snap&&t-ST.snap<1.1)burst('SNAP!',px,py-34,14,'#ffd27a',ST.snap);
   if(ST.bill&&t-ST.bill.t0<2.6){g.textAlign='center';stopText(ST.bill.t,W/2,30,8,'#ff6a5e','center');stopText('+ 2 HOAGIES  UNPAID',W/2,44,6,'#ffd27a','center')}}
-var stopBg=load('stop_inside.webp');
+var stopBg=load('stop_inside.webp'),castImg=load('stop_cast.png');
+/* the cast sheet: x, width, height and where the feet are, for Frank (idle, talking, caught out), Moose (arms folded, talking), Dot (listening, talking) and the kid (looking up, pointing) */
+var CAST=[[0,91,205,37],[93,98,204,37],[193,99,204,37],[294,102,216,53],[398,144,215,86],[544,89,110,44],[635,108,110,62],[745,57,132,30],[804,79,132,28]];
+function stopCast(i,x,fy,flip,sc){if(!ok(castImg))return false;var c=CAST[i];g.save();g.translate(Math.round(x),Math.round(fy));g.scale((flip?-1:1)*sc,sc);g.drawImage(castImg,c[0],0,c[1],c[2],-c[3]/2,-c[2]/2,c[1]/2,c[2]/2);g.restore();return true}
 /* the shop interior is a 432 by 216 picture; everything in it is placed in those units and the whole thing is scaled up on wider screens and slid left on narrow ones */
-function drawStopInside(t){var k=Math.max(1,W/432),ox=W>=432*k?0:-(432*k-W)*.09,oy=H-216*k,F=206,mx=94,fx=232,wx=198,kx=152,i;
+function drawStopInside(t){var k=Math.max(1,W/432),ox=W>=432*k?0:-(432*k-W)*.09,oy=H-216*k,F=206,mx=92,fx=242,wx=170,kx=150,i;
   R(-8,-8,W+16,H+16,'#2a1c14');
   g.save();g.translate(ox,oy);g.scale(k,k);
   if(ok(stopBg))g.drawImage(stopBg,0,0,432,216);else{R(0,0,432,216,'#d8c9a4');R(0,144,432,58,'#8a6a44');R(0,202,432,14,'#4a4038')}
@@ -126,15 +129,16 @@ function drawStopInside(t){var k=Math.max(1,W/432),ox=W>=432*k?0:-(432*k-W)*.09,
   R(230,45,62,34,'rgba(16,18,34,.93)');stopText("MOOSE'S",233,48,5,'#ffd27a');stopText('TURKEY.',233,56,5,'#f6f3e8');stopText('PLAIN.',233,63,5,'#f6f3e8');
   if(ST.news){R(293,45,61,34,((t*3)|0)%2?'#123a7a':'#0f3168');R(306,60,26,8,'#c2281f');R(311,56,12,5,'#c2281f');R(309,67,6,3,'#111');R(324,67,6,3,'#111');R(293,72,61,7,'#c2281f');stopText('LIVE',296,48,5,'#ffffff')}
   /* Dot, behind the pick-up window */
-  g.save();g.beginPath();g.rect(128,90,142,41);g.clip();stopPerson(wx,178,STOP_PAL.W);g.restore();
+  var L0=ST.line,q0=ST.ask&&!L0?ST.ask:null,says=function(w){return (L0&&L0.who===w)||(q0&&q0.who===w)};
+  g.save();g.beginPath();g.rect(128,90,142,41);g.clip();if(!stopCast(says('W')?6:5,wx,138,true,.85))stopPerson(wx,178,STOP_PAL.W);g.restore();
   /* the kid, once the door has chimed, walks in from the left */
-  if(ST.kidIn){var kxx=-14+(kx+14)*ST.kid,hop=ST.kid<1?Math.abs(Math.sin(t*12))*2:0;R(kxx-9,F,18,2,'rgba(0,0,0,.3)');stopPerson(kxx,F+1-hop,STOP_PAL.K)}
+  if(ST.kidIn){var kxx=-14+(kx+14)*ST.kid,hop=ST.kid<1?Math.abs(Math.sin(t*12))*2:0;R(kxx-9,F,18,2,'rgba(0,0,0,.3)');if(!stopCast(says('K')&&ST.kid>=1?8:7,kxx,F+2-hop,false,1))stopPerson(kxx,F+1-hop,STOP_PAL.K)}
   /* Moose at the left screen and Frank at the right one, back to back */
-  R(mx-18,F,36,3,'rgba(0,0,0,.35)');stopPerson(mx,F+1,STOP_PAL.M);if(ok(carImg)){g.save();g.translate(mx-2,F-106);g.scale(-1,1);g.drawImage(carImg,208,3*CARH+10,36,36,-13,0,26,26);g.restore()}
-  R(fx-22,F+1,44,3,'rgba(0,0,0,.35)');if(ok(landImg))landAt(4,fx,F+3,0,1.05);else R(fx-8,F-90,16,90,'#cfe3ff');
+  R(mx-20,F,40,3,'rgba(0,0,0,.35)');if(!stopCast(says('M')?4:3,mx,F+2,says('M'),1))stopPerson(mx,F+1,STOP_PAL.M);
+  var fturn=(L0&&L0.who==='F')||q0||ST.shake>.1,ff=L0&&L0.who==='F'?1:(ST.shake>.1||(q0&&ST.meter<=3))?2:0;R(fx-20,F+1,40,3,'rgba(0,0,0,.35)');if(!stopCast(ff,fx,F+3,fturn,1)){if(ok(landImg))landAt(4,fx,F+3,0,1.05)}
   g.restore();
   function P(x,y){return [ox+x*k,oy+y*k]}
-  var pos={F:P(fx+6,F-98),M:P(mx,F-110),W:P(wx,96),K:P(kx,F-60)},L=ST.line,q=ST.ask,mc=W<400?17:22;
+  var pos={F:P(fx,F-106),M:P(mx,F-112),W:P(wx+4,94),K:P(kx+4,F-68)},L=ST.line,q=ST.ask,mc=W<400?17:22;
   if(L&&L.who==='TV'){var nn=Math.min(L.t.length,Math.floor((t-L.t0)*38)),tx=W>=400?62:8,tl=stopWrap(L.t.slice(0,Math.max(1,nn)),Math.floor((W-tx*2)/7));R(0,H-45,W,45,OUT);R(0,H-44,W,44,'#123a7a');R(0,H-44,W,11,'#c2281f');stopText('JAWN TV   BREAKING NEWS',tx,H-41,6,'#ffffff');tl.forEach(function(l,n2){stopText(l,tx,H-29+n2*9,7,'#ffffff')})}
   else if(L){var n=Math.min(L.t.length,Math.floor((t-L.t0)*38)),p=pos[L.who];stopBubble(p[0],p[1],L.t.slice(0,Math.max(1,n)),L.who==='F'?'#c2281f':'#1a1a26',mc)}
   else if(q){var pq=pos[q.who];stopBubble(pq[0],pq[1],q.t,'#1a1a26',mc)}

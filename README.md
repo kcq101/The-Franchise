@@ -68,6 +68,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `drive_bld3.png` | More fronts: motel, arcade, fire station, tenement, gas station, record shop |
 | `drive_mart2.png` | The Jawn convenience store and gas station, out on the open road between towns (`drive_mart.png` is the earlier version, kept but unused) |
 | `stop_inside.webp` | Inside the Jawn: the counter, the pick-up window and the two ordering screens |
+| `stop_cast.png` | The people in the Jawn: Frank (idle, talking, caught out), Moose (arms folded, talking), Dot (listening, talking), the kid (looking up, pointing) |
 | `drive_scn.png` | Roadworks and waterfront scenery for the chase: excavator, mixer, crane tower, pipes, arrow board, fence, floodlight, clam shack, lighthouse, boat, containers, dock crane, pier, seafood restaurant |
 | `drive_station.png` | The Rushville police station at the end of the left fork |
 | `worker.png`, `worker2.png` | The thief: idle, startled, reaching, jabbing |
