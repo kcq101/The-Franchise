@@ -1,7 +1,7 @@
 /* The stop (level 2-2): Frank and Moose pull into the Jawn for gas and hoagies. A talking level in the style of an old adventure game.
    The woman behind the counter and a kid who wanders in ask Frank questions; L and R are both lies. Lies that agree with the story so far cost nothing;
    a lie that contradicts it cracks the STORY meter, and the later questions crack it whatever he says. When it is empty Moose says his line and they run for it,
-   driving off with the pump nozzle still in the tank. The plain block people are only a fallback for when the cast sheet has not loaded. */
+   driving off with the pump hose still in the tank. The plain block people are only a fallback for when the cast sheet has not loaded. */
 var ST={on:false,ph:'',t0:0,qi:0,story:'',meter:6,queue:[],line:null,ask:null,pick:'',pickT:0,order:1,kid:0,kidIn:false,shake:0,flash:0,news:false,bill:null,snap:0,lied:0,caught:0};
 var STOP_ORDER=['ITALIAN','+ EXTRA EVERYTHING','+ MEATBALLS','+ 2ND HOAGIE INSIDE','+ MAKE IT FOUR FEET','+ CALL IT THE FRANCHISE','+ CHIPS'];
 var STOP_NAME={F:'FRANK',M:'MOOSE',W:'DOT',K:'KID',TV:'NEWS'},STOP_PITCH={F:300,M:150,W:430,K:640,TV:220};
@@ -25,7 +25,7 @@ function stopQuestions(){var dmg=(typeof DR!=='undefined'&&DR.dmg)||187400,doc=S
 function stopPhase(n){ST.ph=n;ST.t0=S.clock}
 function stopOff(){ST.on=false;ST.ph='';stopStopMusic()}
 function startStop(){if(typeof drvStop==='function')drvStop();S.mode='stop';ST.on=true;ST.qi=0;ST.story='';ST.meter=6;ST.queue=[];ST.line=null;ST.ask=null;ST.pick='';ST.order=1;ST.kid=0;ST.kidIn=false;ST.shake=0;ST.flash=0;ST.news=false;ST.bill=null;ST.snap=0;ST.lied=0;ST.caught=0;
-  cv.style.filter='';endBox.hidden=true;tug.hidden=true;hint.hidden=true;padsOn(false);lvl.innerHTML='THE JAWN<br>LEVEL 2-2';barlab.textContent='STORY';track.style.width='0%';stopMeter();stopPhase('arrive');startStopMusic()}
+  cv.style.filter='';endBox.hidden=true;tug.hidden=true;hint.hidden=true;padsOn(true);padL.classList.remove('next');padR.classList.remove('next');lvl.innerHTML='THE JAWN<br>LEVEL 2-2';barlab.textContent='STORY';track.style.width='0%';stopMeter();stopPhase('arrive');startStopMusic()}
 function stopMeter(){for(var i=0;i<6;i++)segs[i].className=i<ST.meter?'on':''}
 function stopSay(who,t){ST.queue.push({who:who,t:t})}
 /* line up the bickering and then the next question, or the collapse if the story is finished */
@@ -46,7 +46,10 @@ function stopAnswer(side){var q=ST.ask,c=q[side],hit=q.hit||0,clash=c.s&&ST.stor
   ST.order=Math.min(STOP_ORDER.length,ST.order+1);ST.qi++;track.style.width=Math.min(100,ST.qi/7*100)+'%';
   ST.queue.unshift({who:'F',t:c.t});
   ST.ask=null;padL.classList.remove('next');padR.classList.remove('next')}
-function stopTap(side){if(ST.ph!=='in')return;
+function stopTap(side){
+  /* outside, a tap moves on to the next line of the regulars' chat */
+  if(ST.ph==='arrive'){var ta=S.clock-ST.t0,nx=STOP_IN-.5;if(ta<5.6||ta>=nx)return;for(var n=0;n<STOP_CHAT.length;n++)if(STOP_CHAT[n][0]>ta+.05){nx=STOP_CHAT[n][0];break}ST.t0=S.clock-nx;return}
+  if(ST.ph!=='in')return;
   if(ST.ask&&!ST.line){if(S.clock-ST.askT>.35)stopAnswer(side);return}
   if(ST.line){var full=ST.line.t.length/38;if(S.clock-ST.line.t0<full)ST.line.t0=S.clock-full;else ST.line.t0=-99}}
 function stopUpdate(dt){var t=S.clock,tt=t-ST.t0,i;ST.shake=Math.max(0,ST.shake-dt*3);ST.flash=Math.max(0,ST.flash-dt*2.5);
@@ -61,11 +64,11 @@ function stopUpdate(dt){var t=S.clock,tt=t-ST.t0,i;ST.shake=Math.max(0,ST.shake-
       if(s.fn)s.fn();else if(s.wait)ST.wait=t+s.wait;else if(s.ask){ST.ask=s.ask;ST.askT=t;ST.pick='';padL.classList.add('next');padR.classList.add('next')}else ST.line={who:s.who,t:s.t,t0:t,n:-1}}}
   else if(ST.ph==='out'){
     if(tt>2.2&&!ST.a1){ST.a1=1;engine();if(audio())try{noise(ac.currentTime,.8,.12,'bandpass',2400,6)}catch(e){}}
-    if(tt>3.25&&!ST.snap){ST.snap=t;ST.shake=1;ST.flash=.8;thump(.4,true);if(audio())try{noise(ac.currentTime,.3,.25,'highpass',2500,.7)}catch(e){}
-      if(typeof DR!=='undefined')DR.dmg=(DR.dmg||0)+14000;ST.bill={t:'+ GAS PUMP  $14,000',t0:t}}
-    if(tt>6.2){stopPhase('end');S.mode='over';var dm=(typeof DR!=='undefined'&&DR.dmg)||14000;
+    if(tt>2.65&&!ST.snap){ST.snap=t;ST.shake=.6;ST.flash=.4;thump(.25);if(audio())try{noise(ac.currentTime,.3,.25,'highpass',2500,.7)}catch(e){}
+      if(typeof DR!=='undefined')DR.dmg=(DR.dmg||0)+2300;ST.bill={t:'+ GAS HOSE  $2,300',t0:t}}
+    if(tt>6.2){stopPhase('end');S.mode='over';var dm=(typeof DR!=='undefined'&&DR.dmg)||2300;
       S.stat+='<br>LIES TOLD: '+ST.lied+'  CAUGHT OUT: '+ST.caught+'<br>DAMAGES: $'+dm.toLocaleString('en-US')+'  HOAGIES: UNPAID';
-      endText.textContent='Two stories, one kid and one news bulletin later, nobody in the Jawn believes a word. "Frank. This is what you always do." They leave with the hoagies, and with the pump.';
+      endText.textContent='Two stories, one kid and one news bulletin later, nobody in the Jawn believes a word. "Frank. This is what you always do." They leave with the hoagies, and with the hose.';
       stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}}
 
 /* ---- drawing ---- */
@@ -92,7 +95,11 @@ function stopCar(x,by,sc,rot,full){if(!ok(carImg))return;var w=CARW/2.6,h=CARH/2
   R(6,h-2,w-12,4,'rgba(0,0,0,.45)');g.drawImage(carImg,0,0,CARW,CARH,0,0,w,h);
   if(full){g.beginPath();g.rect(74.5,4.2,32,15.4);g.clip();gownAt(0,SEATX,SEATY,0,SEATS);g.translate(82,21);g.scale(1.2,1.2);g.translate(-88,-19.4);g.drawImage(carImg,0,3*CARH,252,CARH,0,0,252/2.6,h)}
   g.restore()}
-var STOP_IN=13.7;   /* seconds of arrival before the scene cuts inside */
+/* what gets said at the doors on the way in: start, end, who (a and b are the regulars, f is Frank) and the line */
+var STOP_CHAT=[[5.9,7.6,'a','YOU SEE THE ROCKETS GAME?'],[7.7,9.8,'b','I saw the first half. Then I saw my ceiling.'],[9.9,11.9,'a',"NEW QUARTERBACK'S THE REAL DEAL THOUGH."],[12,13.5,'b','You say that every year.'],
+  [13.6,15.6,'a',"AIN'T BEEN RIGHT SINCE THAT FUMBLE."],[15.7,17.1,'b','Twenty years, man.'],[17.2,18.3,'f','...'],[18.4,19.6,'a','YO. GOWN GUY.'],[19.7,22.1,'a','DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT.'],[22.2,23.4,'f',"I DON'T NEED A STORY."],[23.5,24.7,'b','He needs a story.']];
+var STOP_IN=25.2;   /* seconds of arrival before the scene cuts inside */
+function stopChat(tt){for(var i=0;i<STOP_CHAT.length;i++)if(tt>=STOP_CHAT[i][0]&&tt<STOP_CHAT[i][1])return STOP_CHAT[i];return null}
 /* the two regulars eating at the double bin by the doors (the blocks below are only a fallback for when the picture has not loaded) */
 var guysImg=load('stop_guys.png'),GUYS=[[0,158,75],[160,158,75],[320,180,75]];   /* both chewing, the first one talking, the second one talking: x, width, and where the middle of the bin is */
 function stopGuys(bx,by,t,talk){var i;
@@ -111,17 +118,17 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
   if(ok(drvSky))g.drawImage(drvSky,0,0,1400,303,-8,G-104,484,105);
   R(-200,G-3,W+400,H,'#23242f');R(-200,G-3,W+400,1,'#3c3d4e');for(i=-40;i<W+40;i+=46)R(i,G+14,22,2,'#3a3b4c');
   if(ok(drvMart))g.drawImage(drvMart,0,0,947,243,x0,G-MH+2,MW,MH);
-  var talk=-1;if(!leaving){if(tt>7.3&&tt<11)talk=0;else if(tt>12.3&&tt<13.4)talk=1}else if(tt>.25&&tt<1.5)talk=0;
+  var chat=leaving?null:stopChat(tt),talk=chat?(chat[2]==='a'?0:chat[2]==='b'?1:-1):-1;if(leaving&&tt>.25&&tt<1.5)talk=0;
   stopGuys(bin[0],bin[1],t,talk);
   if(!leaving){var u=Math.min(1,tt/1.9),e=1-Math.pow(1-u,3);carX=cx-(cx+cw+30)*(1-e);rot=u>.5&&u<1?.02*Math.sin((u-.5)/.5*Math.PI):0}
-  else if(tt>2.2){var k=tt-2.2;carX=cx+620*k*k;rot=-.03*Math.min(1,k/.3)}
+  else if(tt>2.2){var k=tt-2.2;carX=cx+280*k*k;rot=-.03*Math.min(1,k/.3)}
   var fill=[carX+34*sc,G+12-34*sc];
   /* the hose: hanging while it pumps, pulled tight as the car goes, then whipping free */
-  if((!leaving&&tt>3)||(leaving&&!ST.snap)){g.strokeStyle='#0c0c12';g.lineWidth=2;g.beginPath();g.moveTo(px,py);var sag=Math.max(0,22-Math.max(0,fill[0]-px-30)*.25);g.quadraticCurveTo((px+fill[0])/2,Math.max(py,fill[1])+sag,fill[0],fill[1]);g.stroke();R(fill[0]-2,fill[1]-2,5,4,'#c2281f')}
-  else if(leaving&&ST.snap){var q=t-ST.snap;g.strokeStyle='#0c0c12';g.lineWidth=2;g.beginPath();g.moveTo(fill[0],fill[1]);for(i=1;i<=6;i++)g.lineTo(fill[0]-i*9,fill[1]+6+Math.sin(t*20+i)*4+i*1.2);g.stroke();
-    if(q<.7)for(i=0;i<14;i++){var a=i*1.9,r=q*90*(.4+(i%5)*.15);R(px+Math.cos(a)*r,py-6+Math.sin(a)*r*.6+q*q*60,2,2,i%2?'#ffd23a':'#ffffff')}
-    g.save();g.translate(px+6,G-2);g.rotate(Math.min(1.35,q*5));R(-7,-30,14,30,OUT);R(-6,-29,12,28,'#c2281f');R(-4,-25,8,8,'#dfe6ee');g.restore();
-    if(q<1)for(i=0;i<6;i++){g.fillStyle='rgba(200,205,220,'+(.4*(1-q)).toFixed(2)+')';g.beginPath();g.arc(px+6+(i-3)*7,G-8-q*30-(i%3)*5,5+q*12,0,TAU);g.fill()}}
+  if((!leaving&&tt>3)||(leaving&&!ST.snap)){g.strokeStyle='#050508';g.lineWidth=3.2;g.lineCap='round';g.beginPath();g.moveTo(px,py);var sag=Math.max(0,22-Math.max(0,fill[0]-px-30)*.25);g.quadraticCurveTo((px+fill[0])/2,Math.max(py,fill[1])+sag,fill[0],fill[1]);g.stroke();R(fill[0]-2,fill[1]-2,5,4,'#c2281f')}
+  else if(leaving&&ST.snap){var q=t-ST.snap;g.strokeStyle='#050508';g.lineWidth=3.2;g.lineCap='round';g.beginPath();g.moveTo(fill[0],fill[1]);for(i=1;i<=7;i++)g.lineTo(fill[0]-i*9,fill[1]+5+Math.sin(t*22+i*1.3)*(3+i)+i*1.5);g.stroke();R(fill[0]-66,fill[1]+14+Math.sin(t*22+9.1)*10,5,4,'#c9cbd8');
+    /* the torn stub left swinging on the dispenser, and a few sparks where it let go */
+    g.beginPath();g.moveTo(px,py);g.quadraticCurveTo(px+3+Math.sin(t*9)*4*Math.max(0,1-q/2),py+8,px+2+Math.sin(t*9)*7*Math.max(0,1-q/2),py+15);g.stroke();
+    if(q<.5)for(i=0;i<10;i++){var a=i*1.9,r=q*70*(.4+(i%5)*.15);R(px+Math.cos(a)*r,py+4+Math.sin(a)*r*.6+q*q*80,2,2,i%2?'#ffd23a':'#ffffff')}}
   /* Frank and Moose on foot: small at the doors, bigger as they come toward the camera and the car */
   var walk=-1,fp=null;
   if(!leaving&&tt>5.5)walk=1-Math.min(1,(tt-5.5)/1.7);else if(leaving&&tt<1.6)walk=Math.min(1,tt/1.5);
@@ -130,16 +137,15 @@ function drawStopOutside(t,tt,leaving){var x0=Math.min(W/2-250,W-455),MW=440,MH=
   if(walk>=0&&walk<.98){var w2=walk*walk*(3-2*walk),s2=SD+(SN-SD)*w2,bob=Math.abs(Math.sin(tt*(leaving?14:9)))*3*s2,stand=!leaving&&walk<=0;if(stand)bob=0;
     var fxw=door[0]-2+(seat[0]-door[0])*w2,fyw=door[1]+(seat[1]-door[1])*w2,mxw=fxw+(leaving?-26:24)*s2*(leaving?Math.min(1,walk*4):1);
     stopCast(leaving?4:3,mxw,fyw-bob,leaving,s2);
-    if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6);else stopCast(tt>11&&tt<12.2?1:0,fxw,fyw-(stand?0:Math.abs(Math.sin(tt*9+1))*3*s2),true,s2);
+    if(leaving)gownAt(((tt*15)|0)%8,fxw,fyw-34*s2*1.6-bob*.6,0,s2*1.6);else stopCast(chat&&chat[2]==='f'?(chat[3]==='...'?2:1):0,fxw,fyw-(stand?0:Math.abs(Math.sin(tt*9+1))*3*s2),true,s2);
     fp=[fxw,fyw-102*s2]}
   if(!leaving)stopCar(carX,G+12,sc,rot,inCar);
   if(leaving&&tt>2.2&&tt<3.6)for(i=0;i<8;i++){var c=tt-2.2-i*.05;if(c>0&&c<1){g.fillStyle='rgba(215,218,230,'+(.45*(1-c)).toFixed(2)+')';g.beginPath();g.arc(cx+20-c*40+i*6,G+8-c*14,4+c*14,0,TAU);g.fill()}}
   g.restore();
   var cb=T(carX+cw*.5,G+12-CARH/2.6*sc-4),bx=cb[0],by=cb[1],ga=T(bin[0]-1,bin[1]-30),gb=T(bin[0]+19,bin[1]-30);
   if(!leaving){if(tt>2.1&&tt<3.2)stopBubble(bx,by,'WE NEED GAS.');else if(tt>3.3&&tt<4.3)stopBubble(bx,by,'I NEED A HOAGIE.','#c2281f');else if(tt>4.4&&tt<5.5)stopBubble(bx,by,'YOU NEED PANTS.');
-    else if(tt>7.3&&tt<8.8)stopBubble(ga[0],ga[1],'YO. GOWN GUY.');else if(tt>8.9&&tt<11)stopBubble(ga[0],ga[1],'DOT CATCHES EVERYTHING. PICK ONE STORY AND STICK TO IT.',null,W<400?18:24);
-    else if(tt>11.1&&tt<12.2&&fp){var fb=T(fp[0],fp[1]);stopBubble(fb[0],fb[1],"I DON'T NEED A STORY.",'#c2281f')}else if(tt>12.3&&tt<13.4)stopBubble(gb[0],gb[1],'He needs a story.')}
-  else{if(tt>.25&&tt<1.5)stopBubble(ga[0],ga[1],'TOLD YOU, BRO.');else if(tt>1.6&&tt<2.5)stopBubble(bx,by,'THE PUMP, FRANK.');else if(tt>2.5&&tt<3.2)stopBubble(Math.min(W-40,bx),by,'NO TIME.','#c2281f');else if(ST.snap&&t-ST.snap>.9&&t-ST.snap<2.6)stopBubble(W-70,G-60,'...That was the pump.')}
+    else if(chat){var cp=chat[2]==='a'?ga:chat[2]==='b'?gb:fp?T(fp[0],fp[1]):null;if(cp)stopBubble(cp[0],cp[1],chat[3],chat[2]==='f'?'#c2281f':null,W<400?18:24)}}
+  else{if(tt>.25&&tt<1.5)stopBubble(ga[0],ga[1],'TOLD YOU, BRO.');else if(tt>1.6&&tt<2.5)stopBubble(bx,by,'THE HOSE, FRANK.');else if(tt>2.5&&tt<3.2)stopBubble(Math.min(W-40,bx),by,'NO TIME.','#c2281f');else if(ST.snap&&t-ST.snap>.9&&t-ST.snap<2.6)stopBubble(W-70,G-60,'...That was the hose.')}
   if(ST.snap&&t-ST.snap<1.1)burst('SNAP!',px,py-34,14,'#ffd27a',ST.snap);
   if(ST.bill&&t-ST.bill.t0<2.6){g.textAlign='center';stopText(ST.bill.t,W/2,30,8,'#ff6a5e','center');stopText('+ 2 HOAGIES  UNPAID',W/2,44,6,'#ffd27a','center')}}
 var stopBg=load('stop_inside.webp'),castImg=load('stop_cast.png');
