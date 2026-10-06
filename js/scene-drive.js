@@ -1,7 +1,7 @@
 /* The chase (level 2-1): a behind-the-car arcade driving level. Frank has taken the wheel of Moose's car. Hold L or R to steer; the car accelerates on its own.
    Hitting traffic and street furniture slows the car and adds to a DAMAGES bill that never resets. Police raise the HEAT meter; a full meter is a bust and a restart from the last checkpoint.
    It ends at a fork: POLICE STATION to the left, HIGHWAY to the right. Frank will not let the player take the left. */
-var drvCar=load('drive_car.png'),drvTraf=load('drive_traffic.png'),drvProp=load('drive_props.png'),drvSky=load('drive_sky.webp'),drvBld=load('drive_bld.png'),drvScn=load('drive_scn.png'),drvStn=load('drive_station.png'),drvBld2=load('drive_bld2.png'),drvBld3=load('drive_bld3.png'),drvMart=load('drive_mart.png');
+var drvCar=load('drive_car.png'),drvTraf=load('drive_traffic.png'),drvProp=load('drive_props.png'),drvSky=load('drive_sky.webp'),drvBld=load('drive_bld.png'),drvScn=load('drive_scn.png'),drvStn=load('drive_station.png'),drvBld2=load('drive_bld2.png'),drvBld3=load('drive_bld3.png'),drvMart=load('drive_mart2.png');
 /* sprite rectangles in each sheet: x, y, width, height */
 var DCAR=[[0,0,184,129],[186,0,206,134],[394,0,218,134],[614,0,196,134],[812,0,206,134]];   /* straight, right, hard right, hard left, left */
 var DTRAF=[[0,0,158,126],[160,0,156,152],[318,0,144,128],[464,0,156,152],[622,0,177,214],[801,0,148,142]];   /* sedan, taxi, hatchback, pickup, box truck, police */
@@ -25,7 +25,7 @@ var DSCENE={
   apartment:{im:'b',r:[0,0,160,221],w:3600},diner:{im:'b',r:[162,0,217,130],w:4400},office:{im:'b',r:[381,0,131,248],w:3000},pawn:{im:'b',r:[514,0,155,185],w:3400},theater:{im:'b',r:[671,0,178,244],w:4000},garage:{im:'b',r:[851,0,174,221],w:4000},
   excavator:{im:'s',r:[0,0,195,132],w:2600},mixer:{im:'s',r:[197,0,212,111],w:2900},tower:{im:'s',r:[411,0,97,174],w:1400},pipes:{im:'s',r:[510,0,138,84],w:1800},arrow:{im:'s',r:[650,0,110,102],w:1500},fence:{im:'s',r:[762,0,166,94],w:2300},flood:{im:'s',r:[930,0,88,143],w:1200},
   shack:{im:'s',r:[1020,0,168,146],w:2600},lighthouse:{im:'s',r:[1190,0,92,146],w:1500},boat:{im:'s',r:[1284,0,202,136],w:3400},boxes:{im:'s',r:[1488,0,122,118],w:2400},dock:{im:'s',r:[1612,0,152,159],w:2800},pier:{im:'s',r:[1766,0,168,56],w:2600},seafood:{im:'s',r:[1936,0,173,132],w:3200},
-  station:{im:'p',r:[0,0,743,366],w:6400},mart:{im:'m',r:[0,0,876,227],w:9000},
+  station:{im:'p',r:[0,0,743,366],w:6400},mart:{im:'m',r:[0,0,947,243],w:9000},
   barber:{im:'c',r:[0,0,148,222],w:3350},bakery:{im:'c',r:[150,0,162,202],w:3650},bar:{im:'c',r:[314,0,176,244],w:3950},laundry:{im:'c',r:[492,0,186,149],w:4200},bank:{im:'c',r:[680,0,194,230],w:4350},hardware:{im:'c',r:[876,0,169,224],w:3800},
   motel:{im:'d',r:[0,0,195,194],w:4400},arcade:{im:'d',r:[197,0,167,144],w:3750},firedept:{im:'d',r:[366,0,170,200],w:3800},tenement:{im:'d',r:[538,0,124,267],w:2800},gas:{im:'d',r:[664,0,254,138],w:5700},records:{im:'d',r:[920,0,130,176],w:2900}};
 var DIMG={b:drvBld,s:drvScn,p:drvStn,c:drvBld2,d:drvBld3,m:drvMart};
