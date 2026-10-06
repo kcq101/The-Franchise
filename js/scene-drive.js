@@ -3,7 +3,7 @@
    It ends at a fork: POLICE STATION to the left, HIGHWAY to the right. Frank will not let the player take the left. */
 var drvCar=load('drive_car.png'),drvTraf=load('drive_traffic.png'),drvProp=load('drive_props.png'),drvSky=load('drive_sky.webp'),drvBld=load('drive_bld.png'),drvScn=load('drive_scn.png'),drvStn=load('drive_station.png');
 /* sprite rectangles in each sheet: x, y, width, height */
-var DCAR=[[0,0,184,129],[186,0,206,134],[394,0,218,134],[614,0,196,134],[812,0,206,134]];   /* straight, left, hard left, hard right, right */
+var DCAR=[[0,0,184,129],[186,0,206,134],[394,0,218,134],[614,0,196,134],[812,0,206,134]];   /* straight, right, hard right, hard left, left */
 var DTRAF=[[0,0,158,126],[160,0,156,152],[318,0,144,128],[464,0,156,152],[622,0,177,214],[801,0,148,142]];   /* sedan, taxi, hatchback, pickup, box truck, police */
 var DTRAF_W=[800,790,730,820,900,800];
 var DTRAF_INFO=[['SEDAN',3800,['He had his blinker on.','That was a family, Frank.']],['TAXI',4500,["Meter's running, Frank.",'He was working.']],['HATCHBACK',3200,['That car was somebody\'s whole car.','She waved at you.']],
@@ -29,6 +29,8 @@ var DSCENE={
 Object.keys(DSCENE).forEach(function(k){DPROP[k]=DSCENE[k]});
 var DMOOSE=['This is MY car.','I just had it detailed.','Ever heard of a brake?','You are not in a movie, Frank.','I have a clean record. Had.'];
 var DSEG=200,DRW=2000,DCAMH=1500,DPZ=1500,DDRAW=150,DHSX=172,DVSY=108,DCY=88,DMAXV=DSEG*62;
+/* downtown is a string of towns with open road between them: first and last segment of each */
+var DTOWNS=[[50,330],[520,790],[980,1260]];
 var DCP=[1300,2700],DBLOCK=3560,DFORK0=3880,DFORK1=4130,DEND=4190,DRAMP=2060;
 var DR={on:false,ph:'',t:0,z:0,x:0,v:0,steer:0,heat:0,dmg:0,busts:0,cp:0,segs:[],cars:[],parts:[],say:null,fsay:null,jump:0,shake:0,flash:0,skyX:0,eng:null,copT:0,copN:0,mi:0,near:0,notyet:false,triedLeft:false};
 
@@ -45,12 +47,14 @@ function drvBuild(){var segs=[],i,r=rng(777);
   function put(i,k,x){if(segs[i])segs[i].props.push({k:k,x:x,hit:0})}
   /* scenery on both sides: buildings downtown, plant and fencing through the roadworks, the docks along the waterfront */
   function beside(i,k,sd){put(i,k,sd*(1.42+DPROP[k].w/2/DRW+r()*.25))}
-  var town=['apartment','diner','office','pawn','theater','garage','apartment','office'],works=['excavator','mixer','tower','pipes','arrow','fence','flood','fence'],shore=['shack','lighthouse','boat','pier','boat'],docks=['boxes','dock','seafood','boxes','shack'],sd=1;
+  var town=Object.keys(DSCENE).filter(function(k){return DSCENE[k].im==='b'}),works=['excavator','mixer','tower','pipes','arrow','fence','flood','fence'],shore=['shack','lighthouse','boat','pier','boat'],docks=['boxes','dock','seafood','boxes','shack'],sd=1;
   for(i=20;i<segs.length;i+=10){var z=segs[i].zone;
-    if(i%20===0){var lw=drvWide(segs[i].fork)+.55;put(i,'lamp',-lw);put(i,'lamp',lw)}
-    if(z===0){if(i%20===10){sd=-sd;beside(i+4,town[(r()*town.length)|0],sd);if(r()<.55)beside(i+8,town[(r()*town.length)|0],-sd)}else if(r()<.25)put(i+3,'tree',(r()<.5?-1:1)*1.75)}
-    else if(z===1){if(i%20===10){sd=-sd;beside(i+4,works[(r()*works.length)|0],sd);if(r()<.35)beside(i+7,r()<.5?'apartment':'garage',-sd)}else if(r()<.3)put(i+4,'tree',(r()<.5?-1:1)*(2.4+r()))}
+    var inTown=z===0&&DTOWNS.some(function(tw){return i>=tw[0]&&i<=tw[1]});
+    if(i%20===0&&(z!==0||inTown)){var lw=drvWide(segs[i].fork)+.55;put(i,'lamp',-lw);put(i,'lamp',lw)}
+    if(z===0){if(!inTown){if(r()<.55)put(i+3,r()<.75?'tree':'billboard',(r()<.5?-1:1)*(1.9+r()*1.4));if(r()<.3)put(i+7,'tree',(r()<.5?-1:1)*(2.4+r()*2))}}
+    else if(z===1){if(i%20===10){sd=-sd;beside(i+4,works[(r()*works.length)|0],sd)}else if(r()<.3)put(i+4,'tree',(r()<.5?-1:1)*(2.4+r()))}
     else if(i<DFORK0-20){if(i%20===0)put(i+5,'palm',(i%40?-1:1)*1.8);if(i%30===10)beside(i+3,shore[(r()*shore.length)|0],-1);if(i%30===20)beside(i+6,docks[(r()*docks.length)|0],1)}}
+  DTOWNS.forEach(function(tw){[-1,1].forEach(function(side){var last='',last2='',k;for(var q=tw[0]+(side>0?3:0);q<=tw[1];q+=6){do{k=town[(r()*town.length)|0]}while(k===last||k===last2);last2=last;last=k;put(q,k,side*(1.34+DPROP[k].w/2/DRW))}})});
   put(DEND+34,'station',-(drvMed(1)+drvWide(1))/2);
   /* things to hit: on the shoulder downtown, in the road through the roadworks */
   var side=['mailbox','trash','news','hotdog','fruit','trash','mailbox','news'];
@@ -72,7 +76,7 @@ function drvBuild(){var segs=[],i,r=rng(777);
   DR.segs=segs;
   /* traffic, parked until the player gets near */
   var cars=[];
-  for(i=130;i<3260;i+=20+((r()*26)|0)){var k=(r()*5.4)|0;if(k>4)k=0;if(Math.abs(i-DRAMP)<60)continue;cars.push({z:i*DSEG,x:[-.66,0,.66][(r()*3)|0],v:DMAXV*(.24+r()*.14),k:k,hit:0,vx:0,cop:false,still:false})}
+  for(i=130;i<3260;i+=27+((r()*30)|0)){var k=(r()*5.4)|0;if(k>4)k=0;if(Math.abs(i-DRAMP)<60)continue;cars.push({z:i*DSEG,x:[-.66,0,.66][(r()*3)|0],v:DMAXV*(.24+r()*.14),k:k,hit:0,vx:0,cop:false,still:false})}
   cars.push({z:DBLOCK*DSEG,x:-.62,v:0,k:5,hit:0,vx:0,cop:true,still:true},{z:DBLOCK*DSEG+60,x:.02,v:0,k:5,hit:0,vx:0,cop:true,still:true});
   for(i=0;i<4;i++)cars.push({z:(DEND+8+i*6)*DSEG,x:-1.25-(i%2)*1.1-(i>1?.15:0),v:0,k:5,hit:0,vx:0,cop:true,still:true,deco:true});
   DR.cars=cars}
@@ -202,7 +206,7 @@ function drawDrive(){var d=DR,t=S.clock,i,n,segs=d.segs,sh=d.shake;
       var spin=cc.hit&&t-cc.hit<1.2?(t-cc.hit)*5*(cc.vx>0?1:-1):0,hh=sprite(drvTraf,DTRAF[cc.k],DTRAF_W[cc.k],Pc,o.z<DPZ?H+9:cs2.clip,spin);
       if(cc.cop&&hh&&!spin){var fl=((t*6)|0)%2,ww2=Pc.s*DTRAF_W[5]*DHSX;g.globalCompositeOperation='lighter';g.fillStyle=fl?'rgba(255,60,50,.55)':'rgba(70,140,255,.55)';g.beginPath();g.arc(Pc.x+(fl?-1:1)*ww2*.18,Pc.y-hh*.93,ww2*.22,0,TAU);g.fill();g.globalCompositeOperation='source-over'}
       g.globalAlpha=1}
-    else if(o.me){var cw=760/DPZ*DHSX,jy=d.jump>0?Math.sin((1-d.jump/1.05)*Math.PI)*46:0,by=DCY+DVSY-jy+(d.v>200?Math.round(Math.sin(t*38)*.6):0),st=d.steer,fr=st<-.6?2:st<-.2?1:st>.6?3:st>.2?4:0,rc=DCAR[fr],w=cw*rc[2]/184,h=w*rc[3]/rc[2];
+    else if(o.me){var cw=760/DPZ*DHSX,jy=d.jump>0?Math.sin((1-d.jump/1.05)*Math.PI)*46:0,by=DCY+DVSY-jy+(d.v>200?Math.round(Math.sin(t*38)*.6):0),st=d.steer,fr=st<-.6?3:st<-.2?4:st>.6?2:st>.2?1:0,rc=DCAR[fr],w=cw*rc[2]/184,h=w*rc[3]/rc[2];
       g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.ellipse(W/2,DCY+DVSY-1,cw*.5*(1-jy/140),5*(1-jy/140),0,0,TAU);g.fill();
       if(ok(drvCar)){g.save();g.translate(W/2,by);g.rotate(st*.04+(d.jump>0?-.04:0));g.drawImage(drvCar,rc[0],rc[1],rc[2],rc[3],-w/2,-h,w,h);g.restore()}else R(W/2-40,by-40,80,40,'#c2281f');
       if(Math.abs(d.x)>drvWide(pseg.fork)&&d.v>2000&&d.jump<=0)for(n=0;n<4;n++){g.fillStyle='rgba(200,200,215,'+(.25+Math.random()*.2).toFixed(2)+')';g.beginPath();g.arc(W/2+(n%2?1:-1)*cw*.4+(Math.random()-.5)*8,by-2-Math.random()*8,3+Math.random()*5,0,TAU);g.fill()}
