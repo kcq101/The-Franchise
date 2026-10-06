@@ -6,7 +6,8 @@ var HALL_KINDS={gurney:{w:52,h:28},chair:{w:30,h:28},cart:{w:30,h:30},sign:{w:16
 /* art: the hallway tile, the obstacle sheet (x, y, width, height of each item), the end window (intact, broken) and the outside shot */
 var hallBg=load('hall_bg.webp'),hallObsImg=load('hall_obs.png'),hallWin=load('hall_window.webp'),hallOut=load('hall_outside.webp');
 var HALL_OBS={gurney:[0,43,121,59],chair:[123,36,73,66],cart:[198,30,65,72],sign:[265,54,36,48],lamp:[303,24,97,78],bar:[402,0,163,102]};
-function hlphase(n){HL.ph=n;HL.t0=S.clock}
+function hlphase(n){HL.ph=n;HL.t0=S.clock;HL.q=0}
+function hlOnce(n){if((HL.q||0)<n){HL.q=n;return true}return false}
 function startHall(){S.mode='hall';S.v=0;S.last=null;HL.x=0;HL.sp=0;HL.jy=0;HL.vy=0;HL.slide=0;HL.stun=0;HL.p=1;HL.dodged=0;HL.hits=0;HL.white=1;HL.shake=0;HL.flash=0;HL.say='';HL.step=0;HL.style=false;HL.shards=[];HL.landed=false;
   var r=rng(4242),x=420,low=['gurney','chair','cart','sign','gurney'],high=['lamp','bar'],n=0;HL.obs=[];
   while(x<HALL_LEN-330){var k=(n%3===2||r()<.22)?high[(r()*2)|0]:low[(r()*low.length)|0],d=HALL_KINDS[k];HL.obs.push({k:k,x:x,w:d.w,h:d.h||0,high:!!d.high,done:false,hit:0});n++;x+=Math.max(150,215-n*6)+r()*55}
@@ -47,8 +48,8 @@ function hallUpdate(dt){var tt=S.clock-HL.t0,t=S.clock,i,o;
   else if(HL.ph==='land'){
     if(!HL.landed&&tt>=HALL_TI){HL.landed=true;HL.shake=1.4;HL.flash=.8;thump(.4,true);HL.say='THOOM!';HL.sayT=t;
       if(audio())try{var n0=ac.currentTime;tone(n0,70,.7,'sine',.4,0,sfxG,30);noise(n0,.5,.25,'lowpass',300,.7);for(i=0;i<10;i++)tone(n0+.25+Math.random()*.9,2000+Math.random()*3000,.07,'triangle',.02+Math.random()*.02)}catch(e){}}
-    if(tt>HALL_TI+3.6){hlphase('end');S.mode='over';S.stat+='<br>ESCAPE: '+HL.dodged+' CLEARED  '+HL.hits+' HITS';
-      endText.textContent='Frank drops four floors, lands on his feet with one hand on the pavement, and stands. He is out.';stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}
+    if(tt>HALL_TI+3){hlphase('car');carSound('in')}}
+  else if(CAR_T[HL.ph])getawayUpdate(tt,t);
   var on=Math.ceil(HL.p*6-.001);for(i=0;i<6;i++)segs[i].className=i<on?'on':''}
 
 /* ---------- drawing ---------- */
@@ -91,7 +92,7 @@ function drawHall(){var t=S.clock,tt=t-HL.t0,ph=HL.ph,i,sh=HL.shake,G=HALL_GY,fx
   g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);
   if(ph==='out'){drawHallOutside(t,tt);return}
   if(ph==='fall'){drawHallFall(t,tt);return}
-  if(ph==='land'||ph==='end'){drawHallLand(t,ph==='end'?99:tt);return}
+  if(ph==='land'||ph==='end'||CAR_T[ph]){drawHallLand(t,ph==='land'?tt:99,ph,tt);return}
   var wx=function(x){return Math.round(x-cam)};
   var ex=wx(HALL_LEN),art=ok(hallBg)&&ok(hallWin);
   if(art){var TW=648,k0=Math.floor(cam/TW),bx;for(var kk=k0;kk*TW-cam<W+8;kk++){bx=Math.round(kk*TW-cam);
@@ -176,21 +177,24 @@ function drawHallFall(t,tt){var i,bw=Math.round(W*.44),u=tt/2.6;
     g.save();g.translate(rx,ry);g.rotate(t*(2+i%3)+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.globalAlpha=.85;g.beginPath();g.moveTo(0,-s);g.lineTo(s*.7,s*.6);g.lineTo(-s*.6,s*.4);g.closePath();g.fill();g.restore()}
   if(ok(landImg))landAt(0,fx,fy+48,.18+Math.sin(t*2.6)*.08,1.05+.2*u);else gownAt(11,fx,fy,1.02+Math.sin(t*2.6)*.06,1.35+.25*u);
   letterbox()}
-function drawHallLand(t,tt){var i,G=178,fx=Math.round(W*.56),hit=tt>=HALL_TI,k=Math.max(0,tt-HALL_TI),bw=Math.round(W*.5);
+function drawHallLand(t,tt,ph,pt){var i,G=178,fx=Math.round(W*.56),hit=tt>=HALL_TI,k=Math.max(0,tt-HALL_TI),bw=Math.round(W*.5),o=carPose(ph||'land',pt||0,fx),px=Math.round(o.pan);
   R(-8,-8,W+16,H+16,'#0a1030');
   if(ok(skyImg))g.drawImage(skyImg,0,0,1240,320,-8,-8,W+16,G+10);
-  if(ok(hallOut)){var wh=bw*250/330;g.drawImage(hallOut,0,470,330,250,-6,G-8-wh,bw,wh)}else R(-8,-8,bw,G,'#39415a');
+  if(ok(hallOut)){var wh=bw*250/330;g.drawImage(hallOut,0,470,330,250,-6-px,G-8-wh,bw,wh)}else R(-8-px,-8,bw,G,'#39415a');
   R(-8,G-8,W+16,10,'#3c3d4e');R(-8,G-8,W+16,1,'#5a5c72');R(-8,G+2,W+16,3,'#22232f');
-  if(ok(streetImg)){for(var sx=-40;sx<W+8;sx+=475)g.drawImage(streetImg,sx,G+4,475,56)}else R(-8,G+4,W+16,H,'#14162a');
+  if(ok(streetImg)){for(var sx=-40-(px%475);sx<W+8;sx+=475)g.drawImage(streetImg,sx,G+4,475,56)}else R(-8,G+4,W+16,H,'#14162a');
+  g.save();g.translate(-px,0);
   if(hit){g.strokeStyle='rgba(8,8,16,.8)';g.lineWidth=1.2;g.beginPath();for(i=0;i<9;i++){var a=Math.PI*(.05+i*.112),len=(22+(i*17)%26)*Math.min(1,k*6);g.moveTo(fx,G+12);g.lineTo(fx+Math.cos(a)*len*1.6,G+12+Math.sin(a)*len*.28+(i%2?3:-2));}g.stroke();
     for(i=0;i<10;i++){var d=(i%2?1:-1)*(14+k*70+(i>>1)*9),r=5+k*16+(i%3)*2,al=Math.max(0,.55-k*.6);g.fillStyle='rgba(205,210,225,'+al.toFixed(2)+')';g.beginPath();g.arc(fx+d,G+10-k*8-(i%3)*3,r,0,TAU);g.fill()}}
-  R(fx-22,G+12,44,3,'rgba(0,0,0,.5)');
-  if(ok(landImg)){
-    if(!hit){var u=tt/HALL_TI;landAt(1,fx-26+26*u,-30+(G+14+30)*u*u,0,1)}
-    else{var sq=Math.min(1,k/.2);landAt(k<1.1?2:k<2.5?3:4,fx+(k>=2.5?4:0),G+14,0,1,.86+.14*sq)}}
-  else if(!hit){var u2=tt/HALL_TI;gownAt(11,fx-40+40*u2,-50+(G-40+50)*u2*u2,1.15,1.25)}
-  else{var sq2=Math.min(1,k/.22);gownAt(8,fx,G-32+(1-sq2)*5,0,1.3,.84+.16*sq2)}
+  if(o.fr==='stand'){R(fx-22,G+12,44,3,'rgba(0,0,0,.5)');
+    if(ok(landImg)){
+      if(!hit){var u=tt/HALL_TI;landAt(1,fx-26+26*u,-30+(G+14+30)*u*u,0,1)}
+      else{var sq=Math.min(1,k/.2);landAt(k<1.1?2:k<2.5?3:4,fx+(k>=2.5?4:0),G+14,0,1,.86+.14*sq)}}
+    else if(!hit){var u2=tt/HALL_TI;gownAt(11,fx-40+40*u2,-50+(G-40+50)*u2*u2,1.15,1.25)}
+    else{var sq2=Math.min(1,k/.22);gownAt(8,fx,G-32+(1-sq2)*5,0,1.3,.84+.16*sq2)}}
   /* glass coming down after him */
   if(hit&&k<1.6)for(i=0;i<18;i++){var gy=-20+((k*190+i*29)%(G+30)),gx=fx-90+(i*23)%180;if(gy<G+8){g.save();g.translate(gx,gy);g.rotate(k*6+i);g.fillStyle=i%3?'#cfe9ff':'#ffffff';g.fillRect(-2,-1,4,2);g.restore()}}
   if(HL.say==='THOOM!'&&t-HL.sayT<1.2)burst('THOOM!',fx,G-70,16,'#ffd27a',HL.sayT);
+  if(o.show)drawGetaway(o,ph,pt,G,fx,t);
+  g.restore();
   letterbox()}
