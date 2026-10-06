@@ -119,7 +119,7 @@ function driveUpdate(dt){var d=DR,i,c,sp,t=S.clock;d.t+=dt;d.shake=Math.max(0,d.
       if(u>.22){if(!d.notyet&&(d.triedLeft||u>.34)){d.notyet=true;drvFrank('NOT YET.',2.4);d.shake=.5;if(audio())try{noise(ac.currentTime,.4,.1,'bandpass',2500,7)}catch(e){}}
         var tx=(drvMed(u)+drvWide(u))/2;d.x+=(tx-d.x)*Math.min(1,dt*(1.5+u*3));hold=d.notyet&&t-d.fsay.t0<.5?1:0}}
     sp=d.v/DMAXV;d.steer+=(hold-d.steer)*Math.min(1,dt*9);
-    if(d.jump<=0){d.x+=d.steer*dt*2.1*Math.min(1,sp*1.6+.1);d.x-=dt*2*sp*sp*seg.curve*.2}
+    if(d.jump<=0){d.x+=d.steer*dt*1.84*Math.min(1,sp*1.6+.1);d.x-=dt*2*sp*sp*seg.curve*.2}
     var lim=drvWide(u),off=Math.abs(d.x)>lim+.02,top=off?DMAXV*.38:DMAXV;
     d.v+=(d.v<top?DMAXV/4.2:-DMAXV*1.1)*dt;if(d.v>top&&!off)d.v=top;d.v=Math.max(0,d.v);
     d.x=Math.max(-lim-.42,Math.min(lim+.42,d.x));

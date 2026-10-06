@@ -38,7 +38,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-dream.js` | The football level: run, collision, loose ball, touchdown, and its drawing |
 | `js/scene-hospital.js` | The hospital scene: waking up, the handcuffs, breaking free, and its drawing |
 | `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
-| `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank makes him move over, takes the wheel and drives off |
+| `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank runs round to the driver's side and makes him move over, takes the wheel and drives off |
 | `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
