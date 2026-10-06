@@ -81,12 +81,12 @@ function fightUpdate(dt0){var dt=dt0*FT.ts;FT.clk+=dt;var t=FT.clk,tt=t-FT.t0,F=
       stat.innerHTML=(S.stat+'<br>TO BE CONTINUED').replace(/^<br>/,'');endBox.hidden=false}}}
 
 /* ---- drawing ---- */
-function ftSpr(img,tab,i,x,fy,flip,sc,rot){if(!ok(img))return;var r=tab[i];sc=sc||1;g.save();g.translate(Math.round(x),Math.round(fy));if(rot)g.rotate(rot);g.scale(flip?-sc:sc,sc);g.drawImage(img,r[0],r[1],r[2],r[3],-r[4]/2,-r[3]/2,r[2]/2,r[3]/2);g.restore()}
+function ftSpr(img,tab,i,x,fy,flip,sc,rot){if(!ok(img))return;var r=tab[i];sc=sc||1;g.save();g.translate(Math.round(x),Math.round(fy));if(rot)g.rotate(rot);g.scale(flip?-sc:sc,sc);g.drawImage(img,r[0],r[1],r[2],r[3],-r[4]/2,-r[3]/4,r[2]/2,r[3]/2);g.restore()}
 function ftFace(i,x,y,w,flip){if(!ok(fightFace))return;var h=w*333/246;g.save();g.translate(x,y);if(flip)g.scale(-1,1);g.drawImage(fightFace,i*250+2,0,246,333,-w/2,0,w,h);g.restore()}
 function ftBar(x,y,w,frac,col,left,name,sub){R(x-1,y-1,w+2,9,OUT);R(x,y,w,7,'#3a1512');var fw=Math.max(0,Math.round(w*frac));R(left?x+w-fw:x,y,fw,7,col);R(x,y,w,1,'rgba(255,255,255,.35)');
   drvText(name,left?x:x+w,y+14,6,'#f6f3e8',left?'left':'right');drvText(sub,left?x+w:x,y+14,5,'#ffd27a',left?'right':'left')}
 function ftCard(lines,a){g.globalAlpha=a;R(0,0,W,H,'#05060f');lines.forEach(function(l){drvText(l[0],W/2,l[1],l[2],l[3])});g.globalAlpha=1}
-function drawFight(){var t=FT.clk,tt=t-FT.t0,ph=FT.ph,F=FT.F,M=FT.M,sh=FT.shake,i,k=Math.max(1,W/432),ox=(W-432*k)/2,oy=H-216*k,G=H-26,fx=W/2-50,mx=W/2+50;
+function drawFight(){var t=FT.clk,tt=t-FT.t0,ph=FT.ph,F=FT.F,M=FT.M,sh=FT.shake,i,k=Math.max(1,W/432),ox=(W-432*k)/2,oy=H-216*k,G=H-32,fx=W/2-50,mx=W/2+50;
   g.setTransform(2,0,0,2,sh?(Math.random()-.5)*8*sh:0,sh?(Math.random()-.5)*6*sh:0);
   R(-8,-8,W+16,H+16,'#05060f');
   if(ph==='talk'){var L=[["MOOSE'S GARAGE. 11:48 PM.",40,7,'#ffd27a']],sc=[[1,'MOOSE','The car. The hose. The hoagies.'],[2.6,'MOOSE','This is on you, Frank.'],[4.2,'FRANK','YOU KNOW WHAT THIS IS REALLY ABOUT.'],[5.8,'FRANK','EVER SINCE THAT FUMBLE'+(tt>6.6?'...':'')]];
@@ -105,7 +105,7 @@ function drawFight(){var t=FT.clk,tt=t-FT.t0,ph=FT.ph,F=FT.F,M=FT.M,sh=FT.shake,
     if(tt<1.5){drvText('TRAINING FLASHBACK',W/2,H/2-8,W<400?10:14,'#ffd27a');drvText('(LAST TUESDAY)',W/2,H/2+12,7,'#f6f3e8');return}
     var cy=G-2,dip=Math.round((1-FT.mash)*8),wob=tt<6.5?Math.sin(t*30)*(1-FT.mash)*2:0;
     [-1,1].forEach(function(d){var cx2=W/2+d*52;R(cx2-11,cy-34,22,3,OUT);R(cx2-10,cy-33,20,2,'#c9cbd8');R(cx2-10,cy-33,2,33,'#8d8fa3');R(cx2+8,cy-33,2,33,'#8d8fa3');R(cx2-10,cy-56,2,24,'#8d8fa3');R(cx2-10,cy-56,20,3,'#3fa35a');R(cx2-10,cy-48,20,3,'#f6f3e8')});
-    ftSpr(fightF,FSPR,6,W/2+wob,cy-34+dip+28,false,.92);
+    ftSpr(fightF,FSPR,6,W/2+wob,cy-36+dip,false,.92);
     if(tt<6.5){drvText('HOLD THE SPLITS',W/2,56,9,'#ffd27a');drvText('TAP L, R, L, R',W/2,70,6,'#f6f3e8');R(W/2-71,80,142,10,OUT);R(W/2-70,81,140,8,'#3a1512');R(W/2-70,81,Math.round(140*FT.mash),8,FT.mash>.7?'#9be37a':'#ffd27a');drvText(Math.max(0,Math.ceil(6.5-tt))+'',W/2,102,10,'#f6f3e8')}
     else{drvText(FT.mash>.7?'FLEXIBILITY: MAXIMUM':'CLOSE ENOUGH',W/2,60,W<400?8:10,'#9be37a');drvText('EXCUSES RESTORED',W/2,76,7,'#ffd27a');drvText('+ 2 LAWN CHAIRS  $60',W/2,92,6,'#ff6a5e')}
     return}
