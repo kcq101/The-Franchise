@@ -20,7 +20,7 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | Hospital bed | Alternate as fast as you can to break the cuffs |
 | Hospital hallway | R jumps, L slides |
 | The chase | Hold L or R to steer |
-| The stop | L or R picks one of two lies; either pad skips a line |
+| The stop | Tap the ingredient bins in the order Dot called them; ASK MOOSE repeats the order (three times in all) |
 | The kumite | L throws an excuse, R blocks (swapped in the final round); L, R, L, R holds the splits |
 
 ## How it is put together
@@ -42,7 +42,8 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-hallway.js` | The escape: the hallway run with obstacles to jump and slide past, and the leap through the window |
 | `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank runs round to the driver's side and makes him move over, takes the wheel and drives off |
 | `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
-| `js/scene-stop.js` | The stop (level 2-2): the talking level at the Jawn, where every answer is a lie, and the drive-off with the pump |
+| `js/scene-stop.js` | The stop (level 2-2): arriving at the Jawn and driving off |
+| `js/scene-rush.js` | Hoagie Fest, the inside of the Jawn: Dot calls a hoagie, the player repeats it on the rail of ingredient bins, Moose wraps |
 | `js/scene-fight.js` | The Driveway Kumite (level 2-3): the argument in Moose's garage as a tournament fighting game, with the splits flashback and the blind final round |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
