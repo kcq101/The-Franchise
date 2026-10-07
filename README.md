@@ -43,12 +43,37 @@ The title screen has a "Start at" menu for jumping straight to any of the six se
 | `js/scene-getaway.js` | The getaway cutscene after the landing: Moose pulls up, the door opens, he yells, Frank runs round to the driver's side and makes him move over, takes the wheel and drives off |
 | `js/scene-drive.js` | The chase (level 2-1): the behind-the-car driving level with traffic, police, the damages bill, the ramp, the roadblock and the fork |
 | `js/scene-stop.js` | The stop (level 2-2): arriving at the Jawn and driving off |
-| `js/scene-rush.js` | Hoagie Fest, the inside of the Jawn: Dot calls a hoagie, the player repeats it on the rail of ingredient bins, Moose wraps |
+| `js/scene-rush.js` | Hoagie Fest, the inside of the Jawn: Dot makes the deal out front, then behind the counter she calls a hoagie, the player repeats it on the bins set into the counter, Moose wraps |
 | `js/scene-fight.js` | The Driveway Kumite (level 2-3): the argument in Moose's garage as a tournament fighting game, with the splits flashback and the blind final round |
 | `js/render.js` | Draws one frame of the alley scenes |
 | `js/main.js` | The game loop and start-up |
 
 Before committing a change, run `python3 stamp.py`. It puts a fresh version number on the stylesheet and script links in `index.html`, so browsers and GitHub Pages pick up the new files straight away and never mix old and new ones.
+
+## Testing and releases
+
+The tests are in `tools/` and drive the game in a headless browser with Playwright. They were written for one machine: most open `/home/claude/the-franchise/index.html`, use the browser at `/opt/pw-browsers/chromium`, and write their screenshots to the folder they are run from, so run them from a scratch folder.
+
+| File | What it does |
+|---|---|
+| `tools/smoke.js` | Starts all ten levels in turn, runs each a few seconds and reports any script error. About 30 seconds, one line of output |
+| `tools/test-jawn.js` | Plays Hoagie Fest through three times: a win, a loss, and a win on a portrait screen |
+| `tools/test-jawn-outside.js` | Stills of the arrival outside the Jawn |
+| `tools/test-kumite.js` | Plays the Driveway Kumite through, landscape and portrait |
+| `tools/test-chase.js` | A bot drives the chase |
+| `tools/test-hallway.js`, `tools/test-getaway.js` | The hospital escape and the getaway cutscene |
+| `tools/test-chain.js` | Getaway into the chase, then back to the alley |
+| `tools/sprites/` | The Python scripts that cut the sprite sheets out of the source art |
+
+The rule for every push:
+
+1. Run the smoke test and a full playthrough of the level that changed.
+2. If the change touches the handoff between two levels, play the level on the other side too.
+3. Look at screenshots only for the scene that changed.
+4. A change to a shared file (`audio.js`, `input.js`, `render.js`, `main.js`, `core.js`, `state.js`) counts as touching every level: run every test.
+5. Run every test once before tagging a build as stable.
+
+Every commit message starts with the build number shown on the title screen. A build is tagged `stable-MMDD-HHMM` only after it has been played on a phone and confirmed.
 
 ## Assets
 
