@@ -60,6 +60,7 @@ function ball(x,y,rot){g.save();g.translate(x,y);g.rotate(rot||0);
 function burst(txt,x,y,size,col,t0){var k=S.clock-t0;g.save();g.translate(Math.round(x+Math.sin(S.clock*50)*1.5),Math.round(y-Math.min(10,k*30)));g.font=size+'px "Press Start 2P", monospace';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=4;g.strokeStyle='#14131b';g.strokeText(txt,0,0);g.fillStyle=col;g.fillText(txt,0,0);g.restore()}
 var crowdC=(function(){var c=mk(256,72),x=c.getContext('2d'),r=rng(321),cols=['#a9adb8','#8f93a0','#c3c6cf','#7b7f8c','#b9a0a0','#9fb0b3','#d7d9df'];x.fillStyle='#868a97';x.fillRect(0,0,256,72);
   for(var y=2;y<72;y+=5)for(var xx=(y%10?0:3);xx<256;xx+=6){x.fillStyle=cols[(r()*cols.length)|0];x.fillRect(xx,y,3,3);x.fillStyle='rgba(40,42,52,.5)';x.fillRect(xx,y+3,3,2)}return c})();
+var crawlImg=load('qb_crawl.png'),CRAWL=[[0,171],[173,116],[291,124],[417,163],[582,116],[700,171]];   /* reach, pull, elbows under, reach with the other arm, pull, lunge */
 var qbImg=load('qb.png'),lineImg=load('lineman.png'),defImg=load('defender.png'),standsImg=load('stands.png');
 var grassC=(function(){var c=mk(80,98),x=c.getContext('2d'),r=rng(88);for(var i=0;i<520;i++){x.fillStyle=r()<.5?'rgba(255,255,255,.07)':'rgba(0,40,10,.1)';x.fillRect((r()*80)|0,(r()*98)|0,r()<.4?2:1,1)}return c})();
 function drawDream(){var t=S.clock,tt=t-D.t0,cx=W/2,GY=164,i,ph=D.ph,sh=D.shake||0,d=Math.floor(D.dist||0);
@@ -89,7 +90,9 @@ function drawDream(){var t=S.clock,tt=t-D.t0,cx=W/2,GY=164,i,ph=D.ph,sh=D.shake|
     shadow(x,y,40);if(art)flipCell(defImg,1+(((t*11+o.v)|0)%2),135,128,79,x,y);else fb(x,y,ADM2,{flip:true,a:t*20,amp:1})})});
   var held=!(ph==='bonk'||ph==='loose'||ph==='scoop'||ph==='end'),y0=GY+30*((held?D.lyf:D.bonkLn)-1),fy=held?y0:y0+(GY+33-y0)*D.lane,fx=cx+D.fx,ff;
   if(pre)ff=((t*2)|0)%2;else if(ph==='run')ff=D.stun>0?5:2+(((t*12)|0)%3);else if(ph==='bonk')ff=tt<.5?5:6;else ff=7;
-  add(fy+.2,function(){if(art){shadow(fx,fy,ff>5?64:36);cell(qbImg,ff,156,142,82,fx,fy-(ph==='loose'&&S.v>.4?1:0))}else{fb(fx,fy,ROCK,{rot:held?0:1.5,a:t*14,amp:held?.8:0});if(held)ball(fx+13,fy-36,-.5)}});
+  add(fy+.2,function(){if(art&&ff===7&&ok(crawlImg)){/* on the ground: each bit of ground gained is the next frame of the crawl, then one last lunge */
+      var cf=ph==='loose'?(Math.round((D.fx+600)/6))%5:(ph==='scoop'&&tt<.9)?5:2,c=CRAWL[cf],w=c[1]/2,rx=fx+(cf===0||cf===3||cf===5?38:22);shadow(rx-w/2,fy,w-6);g.drawImage(crawlImg,c[0],0,c[1],60,Math.round(rx-w),fy+2-30,w,30)}
+    else if(art){shadow(fx,fy,ff>5?64:36);cell(qbImg,ff,156,142,82,fx,fy-(ph==='loose'&&S.v>.4?1:0))}else{fb(fx,fy,ROCK,{rot:held?0:1.5,a:t*14,amp:held?.8:0});if(held)ball(fx+13,fy-36,-.5)}});
   var carried=ph==='scoop'||ph==='end',dy=GY+33;
   if(D.dgo||carried)add(dy+.3,function(){var ddx=cx+D.dx;
     if(!art)fb(ddx,dy,ADM2,{flip:true,a:t*20,amp:1});

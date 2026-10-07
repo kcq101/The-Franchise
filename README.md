@@ -82,6 +82,7 @@ Images are in `assets/img`, audio in `assets/audio`. Sprite sheets are single ro
 | `grap.png` | The two-man grapple |
 | `van.png`, `dumpster.png`, `cop.png` | Vehicles and props |
 | `qb.png`, `lineman.png`, `defender.png` | Football players |
+| `qb_crawl.png` | The quarterback crawling after the loose ball: five crawl frames and a last lunge |
 | `sec1.webp` to `sec5.webp`, `sky.webp`, `street.webp` | Alley walls, skyline, street |
 | `stands.png` | Stadium backdrop |
 | `hall_bg.webp`, `hall_obs.png` | Hospital hallway tile (repeated, every other copy mirrored) and the six obstacles |
